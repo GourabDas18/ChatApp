@@ -62,9 +62,9 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                 return <div className="w-full bg-gray-50 rounded-md flex flex-row items-center px-2  py-1 md:pl-3 md:py-2 select-none cursor-pointer mb-2 md:mb-4" onClick={() => { setSelectedChat(each); setShowleft(false) }} key={JSON.stringify(each) + i}>
                     {/* New Message No----- */}
                     {noOfUnreadMessage(each.messages)>0 &&
-                    <span className="text-yellow-600 text-[1vw] w-[2vw] h-[2vw] flex items-center justify-center rounded-full bg-yellow-50 font-medium absolute right-3 top-0">
-                    <span className="text-[1.12vw] absolute -right-[0.8vw] -top-[0.85vw]">🔔 </span>   
-                    <span className="text-[0.95vw]">{noOfUnreadMessage(each.messages)}</span>
+                    <span className="text-yellow-600 text-[1vw] w-[2vw] h-[2vw] md:w-[8vw] md:h-[8vw] flex items-center justify-center rounded-full bg-yellow-50 font-medium absolute right-3 top-0">
+                    <span className="text-[1.12vw] md:text-[3.2vw] absolute -right-[0.8vw] -top-[0.85vw]">🔔 </span>   
+                    <span className="text-[0.95vw] md:text-[4vw]">{noOfUnreadMessage(each.messages)}</span>
                     </span>
                     }
                     
