@@ -7,13 +7,13 @@ import FriendBox from './Models/FriendBox';
 import RequestBox from './Models/RequestBox';
 import Middle from './Components/Middle';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db, pushMessage } from './firebase';
+import { db } from './firebase';
 import { loadLocalChat } from './Controller/localDatabase/indexDBInIt';
 import autoLogIn from './Controller/auth/autoLogIn';
 import { fetchChat } from './Controller/functions/fetchChat';
 import { ToastContainer } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
-import { getToken } from 'firebase/messaging';
+import tokenGet from './Controller/functions/tokenGet';
   
 
 function App() {
@@ -30,11 +30,10 @@ function App() {
     if(user && !localChatLoad) {
     loadLocalChat(setChatFirstTime , chats , user , chatListeningRef , setChatListening, addChatMessage); // indexDb chat loading
     setLocalChatLoad(true);
-    getToken(pushMessage,{vapidKey: import.meta.env.VITE_FCM_TOKEN})
-    .then(token=>{
-        updateDoc(doc(db,'users',user.uid),{'token': token})
-        .catch(error=>console.log(error))
-    }).catch(error=>console.log(error))
+    if(user.uid){
+      tokenGet(user);
+    }
+    
     // only first time loading
     }
   },[addChatMessage, chats, chatListeningRef, localChatLoad, setChatListening, updateChat, user])

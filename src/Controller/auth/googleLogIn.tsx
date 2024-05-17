@@ -1,8 +1,8 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, db, pushMessage } from "../../firebase";
-import { DocumentData, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { eachUserType } from "../../Context/allTypes";
-import { getToken } from "firebase/messaging";
+import tokenGet from "../functions/tokenGet";
 
 export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<null | eachUserType[] | DocumentData>>, formHide: () => void) => {
     try {
@@ -12,11 +12,9 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
             onSnapshot(doc(db, "users", result.user.uid), ((res) => {
                 if (res.exists()) {
                     setUser(res.data());
-                    getToken(pushMessage, { vapidKey: import.meta.env.VITE_FCM_TOKEN })
-                        .then(token => {
-                            updateDoc(doc(db, 'users', res.data().uid), { 'token': token })
-                                .catch(error => console.log(error))
-                        }).catch(error => console.log(error))
+                    tokenGet(res.data()) ;
+                    formHide();
+                   
                 } else {
                     const createData: eachUserType = {
                         "uid": result.user.uid,
@@ -36,16 +34,11 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
                             onSnapshot(doc(db, "users", result.user.uid), ((res) => {
                                 if (res.exists()) {
                                     setUser(res.data());
-
+                                    tokenGet(res.data()) ;
+                                    formHide()
                                 }
                             }));
-                            getToken(pushMessage, { vapidKey: import.meta.env.VITE_FCM_TOKEN })
-                                .then(token => {
-                                    alert('Login succesful');
-                                    formHide();
-                                    updateDoc(doc(db, 'users', result.user.uid), { 'token': token })
-                                        .catch(error => console.log(error))
-                                }).catch(error => console.log(error))
+                           
                         })
                         .catch(error => alert(error.message))
                 }

@@ -110,11 +110,11 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
             {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
-            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2'>
+            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:absolute md:z-10'>
                 {selectedChat ?
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
-                            <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setSelectedChat(null) }}></i>
+                            <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setTimeout(()=>{setSelectedChat(null)},500) }}></i>
                             <span className={`h-[2vw] w-[2vw] md:h-[8vw] md:w-[8vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                             <div className="flex flex-col">
                                 <p className="text-[0.9vw] font-medium md:text-sm">{friendName}</p>
@@ -129,14 +129,14 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                 }
             </div>
             {/*Chat Middle */}
-            <div className='flex flex-grow flex-col-reverse p-4 max-h-[85%] overflow-x-hidden'>
+            <div className='flex flex-grow flex-col-reverse p-4 max-h-[85%] overflow-x-hidden md:mt-[10%]'>
                 {messageList ?
                     messageList.map((each: eachGroupMessageType, i) => {
                         return each.senderId === user?.uid ?
                             <>
                               
 
-                                <div className={`px-[1vw] py-[0.45vw] md:px-[2.5vw] md:py-[1.55vw] bg-slate-50 ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-bl-lg ' : ' rounded-lg '} ml-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`} key={each.senderId + i}>
+                                <div className={`px-[1vw] py-[0.45vw] md:px-[1.5vw] md:py-[1vw] bg-blue-50 ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-bl-lg ' : ' rounded-lg '} ml-auto max-w-[80%] rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`} key={each.senderId + i}>
                                     {each.type || each.content.includes('base64') ?
                                         <>
                                             <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={each.timestamp + 'img'} onClick={()=>{setImageSrc(each.content); setImageShow(prev=>!prev)}}/>
@@ -147,8 +147,8 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         <p className="text-[0.9vw] md:text-sm font-medium">{each.content}</p>
                                     }
 
-                                    <p className="ml-auto text-[0.6vw] md:text-[2.8vw] text-yellow-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
-                                        {each.status == 'read' ? '✔️✔️' : '✔️'}
+                                    <p className="ml-auto text-[0.6vw] md:text-[2.5vw] text-blue-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
+                                        {each.status == 'read' ? '✔✔' : '✔'}
                                     </p>
                                 </div>
 
@@ -164,7 +164,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                             :
                             <>
                                
-                                <div className={`px-3 py-1 bg-slate-50 md:px-[2.5vw] md:py-[1.55vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
+                                <div className={`px-3 py-1 ml-3 max-w-[80%] bg-pink-50 md:px-[1.5vw] md:py-[1vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
                                     {each.type ?
                                         <>
                                             <img src={each.content} alt={'image message'} className={`max-h-56 w-auto object-cover ${each.upload !== null ? ' brightness-75' : ''}`} onClick={()=>{setImageSrc(each.content);setImageShow(true)}}/>
@@ -175,8 +175,10 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         <p className="text-[0.9vw] md:text-sm font-medium">{each.content}</p>
                                     }
 
-                                    <p className="ml-auto text-[0.6vw] md:text-[2.8vw] text-yellow-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
-                                        {each.status == 'read' ? '✔️✔️' : '✔️'}
+                                    <p className="mr-auto text-[0.6vw] md:text-[2.5vw] text-yellow-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
+                                        {each.status == 'read' ? '✔✔' : '✔'}
+                                        {i>0 &&  messageList[i-1].senderId==user?.uid && <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>}
+                                        {i==0 && <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>}
                                     </p>
                                 </div>
 
@@ -201,7 +203,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                     <label htmlFor="fileInput" className="absolute md:text-xl md:left-4 md:top-4 left-[1.2vw] top-[1.2vw]">
                         <i className="fi fi-sr-images text-pink-800"></i></label>
                     <input type="file" name="fileInput" id="fileInput" className="hidden" onInputCapture={(e) => { blobMaker(e) }} />
-                    <i className="fi fi-sr-paper-plane-top md:text-lg md:right-3 md:top-[2.8vw] right-[0.8vw] top-[0.7vw] text-[1vw] absolute h-[2.2vw] w-[2.2vw] md:h-8 md:w-8 flex items-center justify-center bg-pink-400 rounded-full cursor-pointer" onClick={() => {
+                    <i className="fi fi-sr-paper-plane-top md:text-lg md:right-3 md:top-[3.2vw] right-[0.8vw] top-[0.7vw] text-[1vw] absolute h-[2.2vw] w-[2.2vw] md:h-8 md:w-8 flex items-center justify-center bg-blue-300 rounded-full cursor-pointer" onClick={() => {
                         sentMessage(user?.uid, selectedChat?.chatId, messageText, setMessageText);
                         if (lastSeen !== 'active') {
                             sendMessageNotification(friendToken, user?.username, messageText,)

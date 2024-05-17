@@ -13,7 +13,7 @@ const Left = ({ setaddFriendShow,setRequestFriendShow,showleft,setShowleft }: Le
   const { user } = useStore();
 
   return (
-    <div className={`w-[20%] md:w-full md:absolute md:z-10 backdrop-brightness-125 flex flex-col min-h-[inherit] ${!showleft?' md:-translate-x-[100dvw]':' md:translate-x-0'} md:bg-slate-200`} >
+    <div className={`md:z-20 transitionNeed w-[20%] md:w-full md:absolute backdrop-brightness-125 flex flex-col min-h-[inherit] ${!showleft?' md:-translate-x-[100dvw]':' md:translate-x-0'} md:bg-slate-200`} >
       <div className="flex flex-col pb-5 px-5 md:bg-slate-100 md:mb-5">
         <div className="flex flex-row items-start justify-between backdrop-brightness-150 py-5 md:bg-slate-100">
           <div className="flex flex-row items-center justify-center gap-2">

@@ -62,4 +62,7 @@ export default defineConfig({
       includeManifestIcons: true
     }),
   ],
+  server:{
+    host: '0.0.0.0'
+  }
 })

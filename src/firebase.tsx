@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, isSupported } from "firebase/messaging";
 import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,8 +21,16 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const pushMessage = getMessaging(app);
+export const getPushMessage = async () => {
+  const isSupportedResult = await isSupported();
+  if (isSupportedResult) {
+    return getMessaging(app);
+  } else {
+    return false;
+  }
+}
+export const db = getFirestore(app); 
+
 export const storage = getStorage(app);
 
 function requestPermission() {
@@ -32,7 +40,7 @@ function requestPermission() {
     }else{
      const confirmation = window.confirm("Allow Notification to Accept Chat Notification");
       if(confirmation){
-        requestPermission()
+        alert('Your Notification is off. Turn it on to receie chat notification.')
       }
     }
   })

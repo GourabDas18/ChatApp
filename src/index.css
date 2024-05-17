@@ -11,9 +11,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 *{
+  position: relative;
+}
+.transitionNeed{
   transition: 0.4s ease;
   -webkit-transition: 0.4s ease;
-  position: relative;
 }
 body{
   height: 100dvh;
@@ -55,7 +57,6 @@ body{
     position: relative;
     border-radius: 4vw;
     overflow: hidden;
-    background-color: rgba(247, 247, 252, 0.07);
-    backdrop-filter: blur(5vw);
+    background-color: #6494ed42
   }
 }
