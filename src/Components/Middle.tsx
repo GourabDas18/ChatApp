@@ -137,7 +137,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                               
 
                                 <div className={`px-[1vw] py-[0.45vw] md:px-[2.5vw] md:py-[1.55vw] bg-slate-50 ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-bl-lg ' : ' rounded-lg '} ml-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`} key={each.senderId + i}>
-                                    {each.type ?
+                                    {each.type || each.content.includes('base64') ?
                                         <>
                                             <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={each.timestamp + 'img'} onClick={()=>{setImageSrc(each.content); setImageShow(prev=>!prev)}}/>
                                             {each.upload && <p className="absolute top-0 left-0 text-white text-xs px-4 py-1 bg-violet-900 rounded-full m-2">Uploading ...</p>}
