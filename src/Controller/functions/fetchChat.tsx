@@ -71,7 +71,6 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                             }
                         }
                     })
-                    console.log("checktime",CheckTime)
                     onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                         snapshot.forEach(eachSnap => {
                             if (eachSnap.exists()) {

@@ -110,7 +110,6 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                              getChat=true;
                         }
                     }
-                    console.log('call from add chat');
                     writeLocalDB(chatData[i]);
                 }
             });

@@ -60,7 +60,6 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                     setFriendName(eachOtherUser.username);
                     setFriendToken(eachOtherUser.token);
                     setTyping(eachOtherUser.typing);
-                    console.log(typing);
                 }
             })
         }
@@ -70,7 +69,6 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         e.preventDefault();
         const reader = new FileReader();
         reader.onload = async () => {
-            console.log(reader.result);
             const tempData: eachGroupMessageType = {
                 senderId: user?.uid,
                 content: reader.result!.toString(),
@@ -205,7 +203,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                     <input type="file" name="fileInput" id="fileInput" className="hidden" onInputCapture={(e) => { blobMaker(e) }} />
                     <i className="fi fi-sr-paper-plane-top md:text-lg md:right-3 md:top-[2.8vw] right-[0.8vw] top-[0.7vw] text-[1vw] absolute h-[2.2vw] w-[2.2vw] md:h-8 md:w-8 flex items-center justify-center bg-pink-400 rounded-full cursor-pointer" onClick={() => {
                         sentMessage(user?.uid, selectedChat?.chatId, messageText, setMessageText);
-                        if (lastSeen == 'active') {
+                        if (lastSeen !== 'active') {
                             sendMessageNotification(friendToken, user?.username, messageText,)
                         }
                     }}></i>
