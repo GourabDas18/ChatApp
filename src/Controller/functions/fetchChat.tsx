@@ -1,11 +1,11 @@
 import { DocumentData, collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore"
 import React from "react"
 import { db } from "../../firebase"
-import { eachGroupMessageType, messageGroupType } from "../../Context/allTypes"
+import { eachGroupMessageType, eachUserType, messageGroupType } from "../../Context/allTypes"
+type fetchChatFunctionType = (chatId: string, chatListeningRefCurrent: string[] | null, setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>, updateChat: (chatDetails: messageGroupType | DocumentData) => void, addChatMessage: (chatId: string, message: eachGroupMessageType | DocumentData) => void, chats: messageGroupType[] | DocumentData[] | null,user: DocumentData | eachUserType) => void
 
-type fetchChatFunctionType = (chatId: string, chatListeningRefCurrent: string[] | null, setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>, updateChat: (chatDetails: messageGroupType | DocumentData) => void, addChatMessage: (chatId: string, message: eachGroupMessageType | DocumentData) => void, chats: messageGroupType[] | DocumentData[] | null) => void
-
-export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent, setChatListening, updateChat, addChatMessage, chats) => {
+export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent, setChatListening, updateChat, addChatMessage, chats , user) => {
+    user;
     if (chatListeningRefCurrent) {
         if (chatListeningRefCurrent.indexOf(chatId) === -1) {
             getDoc(doc(db, "chats", chatId))
@@ -35,8 +35,6 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                         onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                             snapshot.forEach(eachSnap => {
                                 if (eachSnap.exists()) {
-                                  
-                                   
                                     addChatMessage(chatId, eachSnap.data());
                                 }
                             })
@@ -77,8 +75,6 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                     onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                         snapshot.forEach(eachSnap => {
                             if (eachSnap.exists()) {
-                               
-                               
                                 addChatMessage(chatId, eachSnap.data());
                             }
                         })

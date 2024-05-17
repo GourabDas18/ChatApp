@@ -53,7 +53,9 @@ body{
     max-width: 95dvw;
     min-width: 95dvw;
     position: relative;
-    border-radius: 1vw;
+    border-radius: 4vw;
     overflow: hidden;
+    background-color: rgba(247, 247, 252, 0.07);
+    backdrop-filter: blur(5vw);
   }
 }

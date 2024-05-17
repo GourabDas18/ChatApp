@@ -1,9 +1,9 @@
-import React, { ReactNode, RefObject, createContext,  useContext } from "react";
+import React, { ReactNode, RefObject, createContext,  useCallback,  useContext } from "react";
 import useState from "react-usestateref";
 import { eachGroupMessageType, eachUserType, messageGroupType } from "./allTypes";
 import { DocumentData } from "firebase/firestore";
 import { writeLocalDB } from "../Controller/localDatabase/writeLocalDB";
-
+import tone from "../assets/message.mp3";
 type storeType = {
     user: null | eachUserType | DocumentData;
     otheruser: null | eachUserType[] | DocumentData;
@@ -30,7 +30,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     const [otheruser, setOtherUser] = useState<null | eachUserType[] | DocumentData[]>(null);
     const [, setChatListening, chatListeningRef] = useState<string[] | null>(null);
     const [chats, setChats,chatref] = useState<messageGroupType[] | DocumentData[] | null>(null);
-    const [selectedChat, setSelectedChat] = useState<messageGroupType | DocumentData | null>(null);
+    const [selectedChat, setSelectedChat,selectedChatref] = useState<messageGroupType | DocumentData | null>(null);
 
     const setChatFirstTime = (chatDetails: messageGroupType | DocumentData) => {
         if (chatref.current) {
@@ -78,7 +78,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
 
     }
 
-    const addChatMessage=(chatId:string,message:eachGroupMessageType|DocumentData)=>{
+    const addChatMessage=useCallback((chatId:string,message:eachGroupMessageType|DocumentData)=>{
         if(chatref.current){
             const chatData = [...chatref.current];
             let getChat=false;
@@ -104,6 +104,9 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                         })
                         if(!getChat){
                             each.messages.push(message);
+                            if(chatId!==selectedChatref.current?.chatId && message.senderId!==user?.uid){
+                                new Audio(tone).play();
+                            }
                              getChat=true;
                         }
                     }
@@ -113,7 +116,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
             });
             setChats([...chatData]);            
         }
-    }
+    },[chatref, selectedChatref, setChats, user?.uid])
 
     const updateOtherUser = (data: eachUserType | DocumentData) => {
         if (otheruser) {

@@ -5,20 +5,24 @@ import { sentMessage } from "../Controller/functions/sentMessage";
 import { sendMessageNotification } from "../Controller/functions/sendMessageNotification";
 import { chatReadDone } from "../Controller/functions/chatRead";
 import { imageUploadAndMessageSENT } from "../Controller/functions/firebaseImageUpload";
+import ImageView from "../Models/ImageView";
 
 type Middletype = {
     setShowleft: React.Dispatch<React.SetStateAction<boolean>>;
+    setImageShow: React.Dispatch<React.SetStateAction<boolean>>;
+    imageShow:boolean
 }
 
 
-const Middle = ({ setShowleft }: Middletype) => {
+const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
 
-    const { selectedChat, otheruser, user, chats, addChatMessage } = useStore();
+    const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat } = useStore();
     const [messageText, setMessageText] = useState<string>("");
     const [messageList, setMessageList] = useState<null | eachGroupMessageType[]>(null);
     const [lastSeen, setLastSeen] = useState<string | null>(null);
     const [friendName, setFriendName] = useState<string | null>(null);
     const [friendToken, setFriendToken] = useState<string>("");
+    const [imgsrc, setImageSrc] = useState<string>("");
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
     useEffect(() => {
         if (chats && selectedChat) {
@@ -40,7 +44,6 @@ const Middle = ({ setShowleft }: Middletype) => {
         if (messageList && selectedChat && user?.uid) {
             //Unread Message Reading mark ===
             const unreadList = messageList.filter(each => each.senderId !== user.uid && each.status !== 'read');
-            console.log("unreadList", unreadList)
             if (unreadList.length > 0) {
                 unreadList.forEach(each => {
                     chatReadDone(selectedChat.chatId, each.timestamp, each.senderId)
@@ -107,12 +110,13 @@ const Middle = ({ setShowleft }: Middletype) => {
 
     return (
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
+            {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
             <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2'>
                 {selectedChat ?
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
-                            <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft) }}></i>
+                            <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setSelectedChat(null) }}></i>
                             <span className={`h-[2vw] w-[2vw] md:h-[8vw] md:w-[8vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                             <div className="flex flex-col">
                                 <p className="text-[0.9vw] font-medium md:text-sm">{friendName}</p>
@@ -135,9 +139,9 @@ const Middle = ({ setShowleft }: Middletype) => {
                               
 
                                 <div className={`px-[1vw] py-[0.45vw] md:px-[2.5vw] md:py-[1.55vw] bg-slate-50 ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-bl-lg ' : ' rounded-lg '} ml-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`} key={each.senderId + i}>
-                                    {each.content.includes('data:image/png;base64') || each.type ?
+                                    {each.type ?
                                         <>
-                                            <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={each.timestamp + 'img'} />
+                                            <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={each.timestamp + 'img'} onClick={()=>{setImageSrc(each.content); setImageShow(prev=>!prev)}}/>
                                             {each.upload && <p className="absolute top-0 left-0 text-white text-xs px-4 py-1 bg-violet-900 rounded-full m-2">Uploading ...</p>}
                                         </>
 
@@ -163,9 +167,9 @@ const Middle = ({ setShowleft }: Middletype) => {
                             <>
                                
                                 <div className={`px-3 py-1 bg-slate-50 md:px-[2.5vw] md:py-[1.55vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
-                                    {each.content.includes('data:image/png;base64') || each.type ?
+                                    {each.type ?
                                         <>
-                                            <img src={each.content} alt={'image message'} className={`max-h-56 w-auto object-cover ${each.upload !== null ? ' brightness-75' : ''}`} />
+                                            <img src={each.content} alt={'image message'} className={`max-h-56 w-auto object-cover ${each.upload !== null ? ' brightness-75' : ''}`} onClick={()=>{setImageSrc(each.content);setImageShow(true)}}/>
                                             {each.upload && <p className="absolute top-0 left-0 text-white text-xs px-4 py-1 bg-violet-900 rounded-full m-2">Uploading ...</p>}
                                         </>
 

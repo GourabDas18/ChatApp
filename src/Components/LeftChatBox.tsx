@@ -4,6 +4,7 @@ import { eachGroupMessageType, eachUserType, messageGroupType } from "../Context
 import { friedDataFetch } from "../Controller/functions/friendDataFetch";
 import { DocumentData } from "firebase/firestore";
 
+
 type leftChatBoxType = {
     setShowleft : React.Dispatch<React.SetStateAction<boolean>>
 }

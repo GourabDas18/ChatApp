@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [react(),
     VitePWA({
+      
       // PWA plugin options
       manifest: {
         name: 'Rab Tap',

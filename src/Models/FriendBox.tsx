@@ -76,7 +76,7 @@ const FriendBox = ({ setaddFriendShow }: FriendBoxType) => {
     }
 
     return (
-        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] p-5' ref={friendElement}>
+        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] md:backdrop-blur-md md:bg-[#ffffffb2] md:shadow-lg md:rounded-lg md:p-4' ref={friendElement}>
             <p className="absolute right-4 top-5 md:right-1 md:top-1  invert-[0.4] opacity-70 cursor-pointer select-none p-2 text-xs rounded-full" onClick={() => { setaddFriendShow(false) }}>❌</p>
             <div className="flex flex-row items-center">
                 <input type="text" placeholder="Search Friends" className=" pl-[2vw] md:pl-8 w-full border-none focus:outline-none rounded-md h-[2vw] md:h-10 bg-white text-[0.8vw] md:text-xs text-gray-800" defaultValue={inputValue} onChange={(e)=>{setInputValue(e.currentTarget.value)}}/>

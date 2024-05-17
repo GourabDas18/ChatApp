@@ -21,7 +21,7 @@ const RequestBox = ({ setRequestFriendShow }: RequestBoxType) => {
    
 
     return (
-        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] p-5' ref={friendElement}>
+        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] md:backdrop-blur-md md:bg-[#ffffffb2] md:shadow-lg md:rounded-lg p-5' ref={friendElement}>
             <h1 className="font-medium md:text-sm md:font-semibold my-1">Add in your friends</h1>
             <p className="absolute right-4 top-5 md:top-1 md:right-1  invert-[0.4] opacity-70 cursor-pointer select-none p-2 text-xs rounded-full" onClick={() => { setRequestFriendShow(false) }}>❌</p>
             <div className="flex flex-row items-center">
@@ -35,7 +35,7 @@ const RequestBox = ({ setRequestFriendShow }: RequestBoxType) => {
                     <h2 className="text-[1vw] md:text-sm font-medium pl-2">{each.username}</h2>
                     <div className="flex flex-row gap-3 md:gap-5 ml-auto">
                         <span className="h-[1.7vw] w-[1.7vw] md:h-6 md:w-6 text-[0.8vw] md:text-xs flex justify-center items-center bg-gray-100 rounded-full cursor-pointer" onClick={()=>{
-                            reqAccept({"uid":user?.uid,"username":user?.username},{"uid":each.uid,"username":each.username},chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,updateOtherUser)
+                            reqAccept({"uid":user?.uid,"username":user?.username},{"uid":each.uid,"username":each.username},chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,updateOtherUser,user)
                         }}>✔️</span>
                         <span className="h-[1.7vw] w-[1.7vw] md:h-6 md:w-6 text-[0.8vw] md:text-xs flex justify-center items-center bg-gray-100 rounded-full cursor-pointer" onClick={()=>{
                            removeRequest({"uid":user?.uid,"username":user?.username},{"uid":each.uid,"username":each.username}) 

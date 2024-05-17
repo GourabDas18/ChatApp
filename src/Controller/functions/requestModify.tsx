@@ -12,10 +12,10 @@ export const removeRequest=(myReqData:friendRequestDataType,removeReqData:friend
 
 type reqAcceptType=(
     myReqData:friendRequestDataType,removeReqData:friendRequestDataType,
-    chatListeningRefCurrent: string[] | null, setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>, updateChat: (chatDetails: messageGroupType | DocumentData) => void, addChatMessage: (chatId: string, message: DocumentData | eachGroupMessageType) => void, chats: messageGroupType[] | DocumentData[] | null,updateOtherUser:(data: DocumentData | eachUserType) => void) => void
+    chatListeningRefCurrent: string[] | null, setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>, updateChat: (chatDetails: messageGroupType | DocumentData) => void, addChatMessage: (chatId: string, message: DocumentData | eachGroupMessageType) => void, chats: messageGroupType[] | DocumentData[] | null,updateOtherUser:(data: DocumentData | eachUserType) => void,user: DocumentData | eachUserType) => void
 
 
-export const reqAccept:reqAcceptType=(myReqData,removeReqData,chatListeningRefCurrent,setChatListening,updateChat,addChatMessage,chats,updateOtherUser)=>{
+export const reqAccept:reqAcceptType=(myReqData,removeReqData,chatListeningRefCurrent,setChatListening,updateChat,addChatMessage,chats,updateOtherUser,user)=>{
     removeRequest(myReqData,removeReqData);
     updateDoc(doc(db,"users",myReqData.uid),{messageList:arrayUnion(`${removeReqData.uid}_${myReqData.uid}`)});
     updateDoc(doc(db,"users",removeReqData.uid),{messageList:arrayUnion(`${removeReqData.uid}_${myReqData.uid}`)});
@@ -27,7 +27,7 @@ export const reqAccept:reqAcceptType=(myReqData,removeReqData,chatListeningRefCu
     setDoc(doc(db,"chats",`${removeReqData.uid}_${myReqData.uid}`),chatRoomData)
     .then(()=>{
         alert(`${removeReqData.username} is now your friend`);
-        fetchChat(`${removeReqData.uid}_${myReqData.uid}`,chatListeningRefCurrent,setChatListening,updateChat,addChatMessage,chats)
+        fetchChat(`${removeReqData.uid}_${myReqData.uid}`,chatListeningRefCurrent,setChatListening,updateChat,addChatMessage,chats,user)
       
         friedDataFetch(removeReqData.uid,updateOtherUser);
     

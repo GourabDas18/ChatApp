@@ -21,6 +21,7 @@ function App() {
   const[addFriendShow,setaddFriendShow]=useState<boolean>(false);
   const[requestFriendShow,setRequestFriendShow]=useState<boolean>(false);
   const[localChatLoad,setLocalChatLoad]=useState<boolean>(false);
+  const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
   useEffect(()=>{
     autoLogIn( setUser , setOtherUser); // Auto login user for first time
@@ -41,7 +42,7 @@ function App() {
  useEffect(()=>{
   if(user?.messageList && user?.messageList.length>0){
     user.messageList.forEach((each:string)=>{
-      fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats);
+      fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
     })
   }
  },[user?.messageList, chats, setChatListening, updateChat, addChatMessage, chatListeningRef])
@@ -93,9 +94,9 @@ function App() {
   },[])
   return (
       <>
-      <div className='mainDiv flex flex-row md:w-[95dvw] md:h-[95dvh]'>
+      <div className='mainDiv flex flex-row md:w-[95dvw] md:h-[95dvh] rounded-md'>
       <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft}/>
-      <Middle setShowleft={setShowleft}/>
+      <Middle setShowleft={setShowleft} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
       </div>
       {!user && <SignUp />}
       {addFriendShow && <FriendBox setaddFriendShow={setaddFriendShow}/>}
