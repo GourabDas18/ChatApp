@@ -12,7 +12,6 @@ export const sendMessageNotification=(token:string|undefined,title:string|undefi
             headers:{
                 'Accept':'application/json',
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin':window.location.origin
             },
         })
        .catch(error=>{console.log(error)})
