@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { eachGroupMessageType, eachUserType } from "../Context/allTypes";
 import { useStore } from "../Context/conext"
 import { sentMessage } from "../Controller/functions/sentMessage";
@@ -17,13 +17,13 @@ type Middletype = {
 const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
 
     const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat } = useStore();
-    const [messageText, setMessageText] = useState<string>("");
     const [messageList, setMessageList] = useState<null | eachGroupMessageType[]>(null);
     const [lastSeen, setLastSeen] = useState<string | null>(null);
     const [friendName, setFriendName] = useState<string | null>(null);
     const [friendToken, setFriendToken] = useState<string>("");
     const [imgsrc, setImageSrc] = useState<string>("");
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
+    const inputBox= useRef<HTMLInputElement|null>(null);
     useEffect(() => {
         if (chats && selectedChat) {
             chats.forEach((chatEach) => {
@@ -88,23 +88,21 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             const fileBlob = e.currentTarget.files[0];
             reader.readAsDataURL(fileBlob);
         }
-
-
-        // data message list e set korbo ->
-        // firebasee upload dbo ->
-        //url pabo and database e upload dbo ->
-        // writeIndexDb te if condition only senderId and timestamp match krbe
-        // writeIndexdb te type image hole content base64 e convert krbo
-
-        // if(e.currentTarget.files){
-
-        // }
-        // const fileBlob = e.currentTarget.files[0].arrayBuffer();
-        // const res = await fetch(filesUrl);
-        // const blob = await res.blob();
-        // console.log(blob)
-        // e.currentTarget.value='';
     }
+
+    const messageSend=useCallback(()=>{
+        const message = inputBox.current?.value;
+        if(message && message.length>0){
+            sentMessage(user?.uid, selectedChat?.chatId, message);
+            if (lastSeen !== 'active') {
+                sendMessageNotification(friendToken, user?.username, message)
+            }
+            if(inputBox.current!==null){
+                inputBox.current.value='';
+            }
+        }
+        
+    },[friendToken, lastSeen, selectedChat?.chatId, user?.uid, user?.username])
 
     return (
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
@@ -199,15 +197,13 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             {
                 selectedChat &&
                 <div className='flex flex-row items-center gap-2'>
-                    <input type="text" placeholder='Write something' className='w-full rounded-full bg-white text-[1vw] md:text-sm md:h-10 md:px-10 text-gray-900 h-[2.5vw] mx-2 my-2 px-[2.5vw] focus:outline-none' value={messageText} onChange={(e) => { setMessageText(e.currentTarget.value) }} />
+                    <input type="text" placeholder='Write something' className='w-full rounded-full bg-white text-[1vw] md:text-sm md:h-10 md:px-10 text-gray-900 h-[2.5vw] mx-2 my-2 px-[2.5vw] focus:outline-none' ref={inputBox}
+                     onKeyUp={(e)=>{if(e.key=='Enter'){messageSend()}}} />
                     <label htmlFor="fileInput" className="absolute md:text-xl md:left-4 md:top-4 left-[1.2vw] top-[1.2vw]">
                         <i className="fi fi-sr-images text-pink-800"></i></label>
                     <input type="file" name="fileInput" id="fileInput" className="hidden" onInputCapture={(e) => { blobMaker(e) }} />
                     <i className="fi fi-sr-paper-plane-top md:text-lg md:right-3 md:top-[3.2vw] right-[0.8vw] top-[0.7vw] text-[1vw] absolute h-[2.2vw] w-[2.2vw] md:h-8 md:w-8 flex items-center justify-center bg-blue-300 rounded-full cursor-pointer" onClick={() => {
-                        sentMessage(user?.uid, selectedChat?.chatId, messageText, setMessageText);
-                        if (lastSeen !== 'active') {
-                            sendMessageNotification(friendToken, user?.username, messageText,)
-                        }
+                        messageSend();
                     }}></i>
                 </div>
             }

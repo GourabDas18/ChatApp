@@ -33,7 +33,7 @@ export const db = getFirestore(app);
 
 export const storage = getStorage(app);
 
-function requestPermission() {
+export function requestPermission() {
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
       console.log('Notification permission granted.');
@@ -46,5 +46,5 @@ function requestPermission() {
   })
 }
 
-requestPermission();
+
 

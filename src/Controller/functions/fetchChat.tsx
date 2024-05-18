@@ -22,16 +22,21 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                     for (let i =0 ; i < eachChat.messages.length; i++) {
                                         const element = eachChat.messages[i];
                                         if (element.status !== 'read' && i>=1) {
-                                            CheckTime=eachChat.messages[i-1];
+                                            CheckTime=eachChat.messages[i-1].timestamp;
                                             return;
                                             
                                         }
                                         if(CheckTime!=='100') return;
                                         
                                     }
+                                    if(eachChat.messages[eachChat.messages.length-1].status=='read'){
+                                        CheckTime = eachChat.messages[eachChat.messages.length-1].timestamp
+                                    }
                                 }
+                               
                             }
                         })
+                        console.log(chatId,CheckTime)
                         onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                             snapshot.forEach(eachSnap => {
                                 if (eachSnap.exists()) {
@@ -61,16 +66,21 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                 for (let i =0 ; i < eachChat.messages.length; i++) {
                                     const element = eachChat.messages[i];
                                     if (element.status !== 'read' && i>=1) {
-                                        CheckTime=eachChat.messages[i-1];
+                                        CheckTime=eachChat.messages[i-1].timestamp;
                                        return;
                                         
                                     }
                                     if(CheckTime!=='100') return;
                                     
                                 }
+                                if(eachChat.messages[eachChat.messages.length-1].status=='read'){
+                                    CheckTime = eachChat.messages[eachChat.messages.length-1].timestamp
+                                }
                             }
+                           
                         }
                     })
+                    console.log(chatId,CheckTime)
                     onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                         snapshot.forEach(eachSnap => {
                             if (eachSnap.exists()) {

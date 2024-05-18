@@ -2,9 +2,9 @@ import { addDoc, collection,  } from "firebase/firestore"
 import { db } from "../../firebase"
 import { eachGroupMessageType } from "../../Context/allTypes"
 
-type sentMessageType=(senderId:string,chatId:string,messageText:string,setMessageText:React.Dispatch<React.SetStateAction<string>>)=>void
+type sentMessageType=(senderId:string,chatId:string,messageText:string)=>void
 
-export const sentMessage:sentMessageType=(senderId,chatId,messageText,setMessageText)=>{
+export const sentMessage:sentMessageType=(senderId,chatId,messageText)=>{
     if(messageText!==""){
         const timestamp =new Date().getTime().toString();
         const updateData:eachGroupMessageType = {
@@ -14,7 +14,6 @@ export const sentMessage:sentMessageType=(senderId,chatId,messageText,setMessage
             status: 'sent'
         }
         addDoc(collection(db,"chats",chatId,"messages"),updateData)
-        .then(()=>{setMessageText("")})
         .catch(error=>console.log(error.message))
         // updateDoc(doc(db,"chats",chatId),{messages:arrayUnion(updateData)})
         

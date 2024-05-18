@@ -23,8 +23,12 @@ function App() {
   const[localChatLoad,setLocalChatLoad]=useState<boolean>(false);
   const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
+  const[showLogin,setShowLogin]=useState<boolean|null>(null);
   useEffect(()=>{
-    autoLogIn( setUser , setOtherUser); // Auto login user for first time
+    if(window.localStorage.getItem('user')!==null){
+      setUser(JSON.parse(window.localStorage.getItem('user')!))
+    }
+    autoLogIn( setUser , setOtherUser , setShowLogin); // Auto login user for first time
   },[])
   useEffect(()=>{
     if(user && !localChatLoad) {
@@ -41,8 +45,16 @@ function App() {
  useEffect(()=>{
   if(user?.messageList && user?.messageList.length>0){
     user.messageList.forEach((each:string)=>{
-      fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
+      if(chatListeningRef.current!==null){
+        if(chatListeningRef.current?.indexOf(each)==-1){
+          fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
+        }
+      }else{
+        fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
+      }
+     
     })
+    window.localStorage.setItem('user',JSON.stringify(user));
   }
  },[user?.messageList, chats, setChatListening, updateChat, addChatMessage, chatListeningRef])
  
@@ -97,7 +109,7 @@ function App() {
       <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft}/>
       <Middle setShowleft={setShowleft} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
       </div>
-      {!user && <SignUp />}
+      {showLogin && <SignUp />}
       {addFriendShow && <FriendBox setaddFriendShow={setaddFriendShow}/>}
       {requestFriendShow && <RequestBox setRequestFriendShow={setRequestFriendShow}/>}
       <ToastContainer />
