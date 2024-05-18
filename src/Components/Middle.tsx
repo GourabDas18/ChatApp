@@ -22,6 +22,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     const [friendName, setFriendName] = useState<string | null>(null);
     const [friendToken, setFriendToken] = useState<string>("");
     const [imgsrc, setImageSrc] = useState<string>("");
+    const [profilePic, setProfilePic] = useState<string>("");
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
     const inputBox= useRef<HTMLInputElement|null>(null);
     useEffect(() => {
@@ -53,13 +54,19 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     }, [messageList, selectedChat, user?.uid,])
 
     useEffect(() => {
+        console.log(selectedChat)
         if (otheruser && selectedChat) {
             otheruser.forEach((eachOtherUser: eachUserType) => {
-                if (eachOtherUser.uid === selectedChat.chatId.replace('_', '').replace(user?.uid, '')) {
+                console.log(selectedChat)
+                if (eachOtherUser.uid === selectedChat.user.uid) {
                     setLastSeen(eachOtherUser.lastSeen);
                     setFriendName(eachOtherUser.username);
                     setFriendToken(eachOtherUser.token);
                     setTyping(eachOtherUser.typing);
+                    if(eachOtherUser.profilePic){
+                        setProfilePic(eachOtherUser.profilePic);
+                    }
+                    
                 }
             })
         }
@@ -113,7 +120,11 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
                             <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setTimeout(()=>{setSelectedChat(null)},500) }}></i>
-                            <span className={`h-[2vw] w-[2vw] md:h-[8vw] md:w-[8vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+
+                            {
+                                profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-10 w-10 rounded-full object-contain`} /> : <span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+                            }
+                            
                             <div className="flex flex-col">
                                 <p className="text-[0.9vw] font-medium md:text-sm">{friendName}</p>
                                 <p className="text-[0.7vw] md:text-[2.4vw]">{lastSeen?.toLocaleUpperCase()}</p>
@@ -127,7 +138,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                 }
             </div>
             {/*Chat Middle */}
-            <div className='flex flex-grow flex-col-reverse p-4 max-h-[85%] overflow-x-hidden md:mt-[10%]'>
+            <div className='flex flex-grow flex-col-reverse p-4 max-h-[85%] overflow-x-hidden md:mt-[10%] md:mb-[10%]'>
                 {messageList ?
                     messageList.map((each: eachGroupMessageType, i) => {
                         return each.senderId === user?.uid ?
@@ -196,8 +207,8 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             </div>
             {
                 selectedChat &&
-                <div className='flex flex-row items-center gap-2'>
-                    <input type="text" placeholder='Write something' className='w-full rounded-full bg-white text-[1vw] md:text-sm md:h-10 md:px-10 text-gray-900 h-[2.5vw] mx-2 my-2 px-[2.5vw] focus:outline-none' ref={inputBox}
+                <div className='flex flex-row items-center gap-2 md:absolute w-full md:bottom-0'>
+                    <input type="text" placeholder='Write something' className='w-full rounded-full bg-white text-[1vw] md:text-base md:h-10 md:px-10 text-gray-900 h-[2.5vw] mx-2 my-2 px-[2.5vw] focus:outline-none' ref={inputBox}
                      onKeyUp={(e)=>{if(e.key=='Enter'){messageSend()}}} />
                     <label htmlFor="fileInput" className="absolute md:text-xl md:left-4 md:top-4 left-[1.2vw] top-[1.2vw]">
                         <i className="fi fi-sr-images text-pink-800"></i></label>

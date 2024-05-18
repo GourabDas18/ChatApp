@@ -38,10 +38,7 @@ export function requestPermission() {
     if (permission === 'granted') {
       console.log('Notification permission granted.');
     }else{
-     const confirmation = window.confirm("Allow Notification to Accept Chat Notification");
-      if(confirmation){
-        alert('Your Notification is off. Turn it on to receie chat notification.')
-      }
+      alert('Your Notification is off. Allow Notification to Accept Chat Notification')
     }
   })
 }

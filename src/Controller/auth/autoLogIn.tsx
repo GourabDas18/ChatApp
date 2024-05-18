@@ -1,7 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth"
 import { auth, db } from "../../firebase"
 import { eachUserType } from "../../Context/allTypes"
-import { DocumentData, doc, onSnapshot} from "firebase/firestore"
+import { DocumentData, doc, onSnapshot, updateDoc} from "firebase/firestore"
 import { otherUserDataLoad } from "./otherUserDataLoad"
 
 const autoLogIn=(setUser:React.Dispatch<React.SetStateAction<null|eachUserType|DocumentData>>,
@@ -17,6 +17,9 @@ const autoLogIn=(setUser:React.Dispatch<React.SetStateAction<null|eachUserType|D
             otherUserDataLoad(res.uid,setOtherUser);
             onSnapshot(doc(db,'users',res.uid),(result=>{
                 if(result.exists()){
+                    if(result.data().profilePic==null){
+                        updateDoc(doc(db,'users',res.uid),{'profilePic':res.photoURL})
+                    }
                     setUser(result.data());
                 }
             }));

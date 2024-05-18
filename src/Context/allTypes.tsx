@@ -31,6 +31,7 @@ export type eachUserType = {
     };
     "messageList":eachMessageType[]|null;
     "token":string
+    "profilePic"?:string
 }
 
 export type eachGroupMessageType={

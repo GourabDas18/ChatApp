@@ -4,6 +4,7 @@ import { eachGroupMessageType, eachUserType, messageGroupType } from "./allTypes
 import { DocumentData } from "firebase/firestore";
 import { writeLocalDB } from "../Controller/localDatabase/writeLocalDB";
 import tone from "../assets/message.mp3";
+import { allEachChatType } from "../Components/LeftChatBox";
 type storeType = {
     user: null | eachUserType | DocumentData;
     otheruser: null | eachUserType[] | DocumentData;
@@ -16,8 +17,8 @@ type storeType = {
     setChatFirstTime: (chatDetails: messageGroupType | DocumentData) => void;
     addChatMessage: (chatId:string,message:eachGroupMessageType|DocumentData)=>void;
     updateOtherUser: (data: eachUserType | DocumentData) => void;
-    selectedChat: messageGroupType | null | DocumentData;
-    setSelectedChat: React.Dispatch<React.SetStateAction<null | messageGroupType | DocumentData>>;
+    selectedChat: allEachChatType | null | DocumentData;
+    setSelectedChat: React.Dispatch<React.SetStateAction<null | allEachChatType | DocumentData>>;
 }
 type StoreFunctionProps = {
     children: ReactNode
@@ -77,6 +78,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
         }
 
     }
+    
 
     const addChatMessage=useCallback((chatId:string,message:eachGroupMessageType|DocumentData)=>{
         if(chatref.current){
@@ -120,8 +122,10 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     const updateOtherUser = (data: eachUserType | DocumentData) => {
         if (otheruser) {
             setOtherUser([...otheruser, data])
+            window.localStorage.setItem('otheruser',JSON.stringify([...otheruser,data]))
         } else {
             setOtherUser([data])
+            window.localStorage.setItem('otheruser',JSON.stringify([data]))
         }
 
     }

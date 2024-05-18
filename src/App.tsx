@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css'
 import Left from './Components/Left'
 import SignUp from './Models/SignUp'
@@ -27,6 +27,9 @@ function App() {
   useEffect(()=>{
     if(window.localStorage.getItem('user')!==null){
       setUser(JSON.parse(window.localStorage.getItem('user')!))
+    }
+    if(window.localStorage.getItem('otheruser')!==null){
+      setOtherUser(JSON.parse(window.localStorage.getItem('otheruser')!))
     }
     autoLogIn( setUser , setOtherUser , setShowLogin); // Auto login user for first time
   },[])
@@ -58,42 +61,40 @@ function App() {
   }
  },[user?.messageList, chats, setChatListening, updateChat, addChatMessage, chatListeningRef])
  
-  window.onpagehide=()=>{
+  window.onpagehide=useCallback(()=>{
     if(user){
       if(user?.lastSeen==='active'){
         updateDoc(doc(db,"users",user?.uid),{'lastSeen':new Date().toLocaleTimeString()})
       }
     }
-
-  }
-  window.onblur=()=>{
+  },[user])
+  window.onblur=useCallback(()=>{
     if(user){
       if(user?.lastSeen==='active'){
         updateDoc(doc(db,"users",user?.uid),{'lastSeen':new Date().toLocaleTimeString()})
       }
     }
-
-  }
-  window.onclose=()=>{
+  },[user])
+  window.onclose=useCallback(()=>{
     updateDoc(doc(db,"users",user?.uid),{'lastSeen':new Date().toLocaleTimeString()})
-  }
+  },[user])
   
-  window.onpageshow=()=>{
+  window.onpageshow=useCallback(()=>{
     if(user){
       if(user?.lastSeen!=='active'){
         updateDoc(doc(db,"users",user?.uid),{'lastSeen':'active'})
       }
     }
 
-  }
-  window.onfocus=()=>{
+  },[user])
+  window.onfocus=useCallback(()=>{
     if(user){
       if(user?.lastSeen!=='active'){
         updateDoc(doc(db,"users",user?.uid),{'lastSeen':'active'})
       }
     }
 
-  }
+  },[user])
   useEffect(()=>{
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./firebase-messaging-sw.js')

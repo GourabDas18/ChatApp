@@ -21,7 +21,7 @@ const Left = ({ setaddFriendShow,setRequestFriendShow,showleft,setShowleft }: Le
             <div className="flex flex-col items-start">
               {
                 user ?
-                  <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{user.username.substring(0, 1).toUpperCase()}</span>
+                  user.profilePic ? <img src={user.profilePic} alt={user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{user.username.substring(0, 1).toUpperCase()}</span>
                   : <i className="fi fi-sr-circle-user text-[1.2vw]"></i>
               }
               <h2 className="text-[1vw] md:text-sm">{user ? user.username : 'Log in'}</h2>

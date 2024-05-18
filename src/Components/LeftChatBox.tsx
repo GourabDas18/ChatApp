@@ -8,10 +8,14 @@ import { DocumentData } from "firebase/firestore";
 type leftChatBoxType = {
     setShowleft : React.Dispatch<React.SetStateAction<boolean>>
 }
-
+export type allEachChatType = {
+    'user': string;
+    'messages': eachGroupMessageType; 
+    'chatId': string;
+}
 const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
     const { user, otheruser, updateOtherUser, chats, setSelectedChat } = useStore();
-    const [ allchats , setAllChat] = useState<null | messageGroupType[] | DocumentData[]>(null);
+    const [ allchats , setAllChat] = useState<null | allEachChatType[] | DocumentData[]>(null);
 
     const chatUserDataGet = useCallback((chats:messageGroupType[] | DocumentData[] | null) => {
         chats?.forEach(each => {
@@ -40,11 +44,25 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
 
     useEffect(()=>{
         if(chats){
-            chatUserDataGet(chats)
-            setAllChat([...chats])
+            chatUserDataGet(chats);
+            const chatList:allEachChatType[]=[];
+            chats.forEach((eachChat)=>{
+                const modifyChat={
+                    user:'',
+                    messages:eachChat.messages,
+                    chatId:eachChat.chatId
+                };
+                if(eachChat.users[0]!==user?.uid){
+                    modifyChat.user=eachChat.users[0];
+                }else{
+                    modifyChat.user=eachChat.users[1];
+                }
+                chatList.push(modifyChat)
+            })
+            setAllChat([...chatList])
             
         }
-    },[chatUserDataGet, chats, setSelectedChat])
+    },[chatUserDataGet, chats, setSelectedChat, user?.uid])
 
     const noOfUnreadMessage=(messageList:eachGroupMessageType[])=>{
         if(messageList){
@@ -69,13 +87,15 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     </span>
                     }
                     
+                    {
+                    each.user?.profilePic?<img src={each.user.profilePic} alt={each.user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user.username.substring(0, 1).toUpperCase()}</span>
+                    }
 
-                    <span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${each.users[0].uid === user?.uid && each.users[1].uid.lastSeen === 'active' && 'ring-4 ring-green-400'}`} >{each.users[0].uid === user?.uid ? each.users[0]?.username.substring(0, 1).toUpperCase()
-                        : each.users[0]?.username.substring(0, 1).toUpperCase()
-                    }</span>
+                    {/* user.profilePic ? <img src={user.profilePic} alt={user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{user.username.substring(0, 1).toUpperCase()}</span> */}
+                  
                     <div className="flex flex-col items-start ml-1">
                         <div className="flex flex-col">
-                        <p className="text-[0.9vw] md:text-sm font-medium">{each.users[0].uid === user?.uid ? each.users[1].username : each.users[0].username}</p>
+                        <p className="text-[0.9vw] md:text-sm font-medium">{each.user.username}</p>
                         <p className="text-[0.75vw] md:text-xs">
                             {each.messages.length > 0 
                             ? 
