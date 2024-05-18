@@ -1,4 +1,4 @@
-import { DocumentData, collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore"
+import { DocumentData, collection, doc, getDoc, onSnapshot, query, where, getDocs } from "firebase/firestore"
 import React from "react"
 import { db } from "../../firebase"
 import { eachGroupMessageType, eachUserType, messageGroupType } from "../../Context/allTypes"
@@ -8,35 +8,103 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
     user;
     if (chatListeningRefCurrent) {
         if (chatListeningRefCurrent.indexOf(chatId) === -1) {
-            getDoc(doc(db, "chats", chatId))
-                .then(docRes => {
-                    if (docRes.exists()) {
-                        updateChat(docRes.data());
-                        const oldChat = chatListeningRefCurrent;
-                        oldChat?.push(chatId);
-                        setChatListening(oldChat);
-                        let CheckTime = "100";
-                        chats?.forEach((eachChat) => {
-                            if (eachChat.chatId === chatId) {
-                                if (eachChat.messages.length > 0) {
-                                    for (let i =0 ; i < eachChat.messages.length; i++) {
-                                        const element = eachChat.messages[i];
+            getDoc(doc(db,'chats',chatId)).then(res=>{
+                if(res.exists()){
+                    const users = res.data().users;
+                    getDocs(collection(db, "chats", chatId,'messages'))
+                    .then(docRes => {
+                        const serverChats: DocumentData[] =[];
+                        docRes.forEach(each=>{
+                            if(each.exists()){
+                                serverChats.push(each.data());
+                            }
+                        })
+                            updateChat({
+                                chatId:chatId,
+                                messages:serverChats,
+                                users:users
+                            });
+                            let CheckTime = "100";
+                                if (serverChats.length > 0) {
+                                    let haveNoUnread=true;
+                                    for (let i =0 ; i < serverChats.length; i++) {
+                                        const element = serverChats[i];
                                         if (element.status !== 'read' && i>=1) {
-                                            CheckTime=eachChat.messages[i-1].timestamp;
-                                            return;
+                                            CheckTime=serverChats[i-1].timestamp;
+                                            haveNoUnread=false
+                                           return;
                                             
                                         }
                                         if(CheckTime!=='100') return;
                                         
                                     }
-                                    if(eachChat.messages[eachChat.messages.length-1].status=='read'){
-                                        CheckTime = eachChat.messages[eachChat.messages.length-1].timestamp
+                                    if(haveNoUnread){
+                                        if(serverChats[serverChats.length-1].status=='read'){
+                                            CheckTime = serverChats[serverChats.length-1].timestamp
+                                        }
+                                    }
+                                    
+                                }
+                            console.log("from chatlisten null",chatId,CheckTime)
+                            onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
+                                snapshot.forEach(eachSnap => {
+                                    if (eachSnap.exists()) {
+                                        addChatMessage(chatId, eachSnap.data());
+                                    }
+                                })
+                            }))
+                            setChatListening((old: string[] | null) => {
+                                if (old === null) {
+                                    return [chatId]; // If previous state is null, initialize with [chatId]
+                                } else {
+                                    return [...old, chatId]; // Otherwise, append chatId to the existing array
+                                }
+                            });
+                           
+                        
+                    })
+                }
+            })
+        }
+    } else {
+        getDoc(doc(db,'chats',chatId)).then(res=>{
+            if(res.exists()){
+                const users = res.data().users;
+                getDocs(collection(db, "chats", chatId,'messages'))
+                .then(docRes => {
+                    const serverChats: DocumentData[] =[];
+                    docRes.forEach(each=>{
+                        if(each.exists()){
+                            serverChats.push(each.data());
+                        }
+                    })
+                        updateChat({
+                            chatId:chatId,
+                            messages:serverChats,
+                            users:users
+                        });
+                        let CheckTime = "100";
+                            if (serverChats.length > 0) {
+                                let haveNoUnread=true;
+                                for (let i =0 ; i < serverChats.length; i++) {
+                                    const element = serverChats[i];
+                                    if (element.status !== 'read' && i>=1) {
+                                        CheckTime=serverChats[i-1].timestamp;
+                                        haveNoUnread=false
+                                       return;
+                                        
+                                    }
+                                    if(CheckTime!=='100') return;
+                                    
+                                }
+                                if(haveNoUnread){
+                                    if(serverChats[serverChats.length-1].status=='read'){
+                                        CheckTime = serverChats[serverChats.length-1].timestamp
                                     }
                                 }
-                               
+                                
                             }
-                        })
-                        console.log(chatId,CheckTime)
+                        console.log("from chatlisten null",chatId,CheckTime)
                         onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
                             snapshot.forEach(eachSnap => {
                                 if (eachSnap.exists()) {
@@ -44,52 +112,19 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                 }
                             })
                         }))
-                    }
+                        setChatListening((old: string[] | null) => {
+                            if (old === null) {
+                                return [chatId]; // If previous state is null, initialize with [chatId]
+                            } else {
+                                return [...old, chatId]; // Otherwise, append chatId to the existing array
+                            }
+                        });
+                       
+                    
                 })
-        }
-    } else {
-        getDoc(doc(db, "chats", chatId))
-            .then(docRes => {
-                if (docRes.exists()) {
-                    updateChat(docRes.data());
-                    setChatListening((old: string[] | null) => {
-                        if (old === null) {
-                            return [chatId]; // If previous state is null, initialize with [chatId]
-                        } else {
-                            return [...old, chatId]; // Otherwise, append chatId to the existing array
-                        }
-                    });
-                    let CheckTime = "100";
-                    chats?.forEach((eachChat) => {
-                        if (eachChat.chatId === chatId) {
-                            if (eachChat.messages.length > 0) {
-                                for (let i =0 ; i < eachChat.messages.length; i++) {
-                                    const element = eachChat.messages[i];
-                                    if (element.status !== 'read' && i>=1) {
-                                        CheckTime=eachChat.messages[i-1].timestamp;
-                                       return;
-                                        
-                                    }
-                                    if(CheckTime!=='100') return;
-                                    
-                                }
-                                if(eachChat.messages[eachChat.messages.length-1].status=='read'){
-                                    CheckTime = eachChat.messages[eachChat.messages.length-1].timestamp
-                                }
-                            }
-                           
-                        }
-                    })
-                    console.log(chatId,CheckTime)
-                    onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
-                        snapshot.forEach(eachSnap => {
-                            if (eachSnap.exists()) {
-                                addChatMessage(chatId, eachSnap.data());
-                            }
-                        })
-                    }))
-                }
-            })
+            }
+        })
+       
     }
 
 }

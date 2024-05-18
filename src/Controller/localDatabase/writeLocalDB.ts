@@ -30,6 +30,9 @@ export const writeLocalDB=(messageData:messageGroupType|DocumentData)=>{
     request.onsuccess=()=>{
       
         const transaction = request.result.transaction(['messageGroup'],'readwrite');
+        transaction.onerror=(error)=>{
+            console.log(error)
+        }
         const objectStore = transaction.objectStore('messageGroup');
         const chatGroupCall = objectStore.get(modifyMessageData.chatId);
         

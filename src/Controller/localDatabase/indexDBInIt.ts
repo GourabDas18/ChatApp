@@ -32,9 +32,9 @@ export const loadLocalChat:loadLocalChatType=(setChatFirstTime:(chatDetails: mes
           
           }
         }else{
-            const transaction = request.result.transaction('myObjectStore', 'readwrite');
+            const transaction = request.result.transaction('messageGroup', 'readwrite');
             // Get the object store
-            transaction.objectStore('myObjectStore');
+            transaction.objectStore('messageGroup');
             request.result.close();
         }
     }

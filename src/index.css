@@ -12,14 +12,19 @@
 }
 *{
   position: relative;
+  scroll-behavior: smooth;
 }
 .transitionNeed{
   transition: 0.4s ease;
   -webkit-transition: 0.4s ease;
 }
+html{
+  height: 100%;
+  width: 100%;
+}
 body{
-  height: 100dvh;
-  width: 100dvw;
+  height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,10 +55,8 @@ body{
 
 @media screen and (max-width:760px) {
   #root{
-    min-height: 95dvh;
-    max-height: 95dvh;
-    max-width: 95dvw;
-    min-width: 95dvw;
+   height: 100%;
+   width: 100%;
     position: relative;
     border-radius: 4vw;
     overflow: hidden;

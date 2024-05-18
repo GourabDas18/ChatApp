@@ -14,7 +14,7 @@ export type allEachChatType = {
         'username':string,
         'profilePic':string|null
     }
-    'messages': eachGroupMessageType; 
+    'messages': eachGroupMessageType[]; 
     'chatId': string;
 }
 const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
@@ -46,21 +46,27 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
         })
     },[otheruser, updateOtherUser, user?.uid])
 
+    
     useEffect(()=>{
         if(chats){
             chatUserDataGet(chats);
             const chatList:allEachChatType[]=[];
             chats.forEach((eachChat)=>{
+
                 const modifyChat={
                     user:{
                         uid:'',
                         username:'',
                         profilePic:null
                     },
-                    messages:eachChat.messages,
+                    messages:[...eachChat.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                        if (a.timestamp > b.timestamp) return 1;
+                        if (b.timestamp > a.timestamp) return -1;
+                        return 0; // Add this line to handle the case when timestamps are equal
+                    })],
                     chatId:eachChat.chatId
                 };
-                if(eachChat.users[0].uid ==user?.uid){
+                if(eachChat.users[0].uid.replaceAll('"','') ==user?.uid.replaceAll('"','')){
                     modifyChat.user.uid=eachChat.users[1].uid;
                     modifyChat.user.username=eachChat.users[1].username;
                 }else{
@@ -68,7 +74,6 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                 }
                 chatList.push(modifyChat)
             })
-            console.log('chatList : ',chatList)
             chatList.forEach(chat=>{
                 otheruser?.forEach((eachUser:eachUserType)=>{
                     if(chat.user.uid==eachUser.uid){
@@ -80,9 +85,9 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
             })
             
             setAllChat([...chatList])
-            
+            console.log(allchats)
         }
-    },[chatUserDataGet, chats, setSelectedChat, user?.uid])
+    },[chatUserDataGet, chats, otheruser, setSelectedChat, user?.uid])
 
     const noOfUnreadMessage=(messageList:eachGroupMessageType[])=>{
         if(messageList){
@@ -111,7 +116,6 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     each.user?.profilePic?<img src={each.user.profilePic} alt={each.user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user.username.substring(0, 1).toUpperCase()}</span>
                     }
 
-                    {/* user.profilePic ? <img src={user.profilePic} alt={user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{user.username.substring(0, 1).toUpperCase()}</span> */}
                   
                     <div className="flex flex-col items-start ml-1">
                         <div className="flex flex-col">

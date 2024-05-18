@@ -43,10 +43,10 @@ function App() {
     
     // only first time loading
     }
-  },[addChatMessage, chats, chatListeningRef, localChatLoad, setChatListening, updateChat, user])
+  },[addChatMessage, chats, chatListeningRef, localChatLoad, setChatListening, updateChat, user, setChatFirstTime])
  
  useEffect(()=>{
-  if(user?.messageList && user?.messageList.length>0){
+  if(user?.messageList && user?.messageList.length>0 ){
     user.messageList.forEach((each:string)=>{
       if(chatListeningRef.current!==null){
         if(chatListeningRef.current?.indexOf(each)==-1){
@@ -59,7 +59,7 @@ function App() {
     })
     window.localStorage.setItem('user',JSON.stringify(user));
   }
- },[user?.messageList, chats, setChatListening, updateChat, addChatMessage, chatListeningRef])
+ },[user, chatListeningRef, setChatListening, updateChat, addChatMessage, chats])
  
   window.onpagehide=useCallback(()=>{
     if(user){
@@ -106,7 +106,7 @@ function App() {
   },[])
   return (
       <>
-      <div className='mainDiv flex flex-row md:w-[95dvw] md:h-[95dvh] rounded-md'>
+      <div className='mainDiv flex flex-row md:w-full md:h-full rounded-md'>
       <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft}/>
       <Middle setShowleft={setShowleft} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
       </div>

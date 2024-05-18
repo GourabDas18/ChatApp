@@ -6,7 +6,6 @@ import { sendMessageNotification } from "../Controller/functions/sendMessageNoti
 import { chatReadDone } from "../Controller/functions/chatRead";
 import { imageUploadAndMessageSENT } from "../Controller/functions/firebaseImageUpload";
 import ImageView from "../Models/ImageView";
-import { friedDataFetch } from "../Controller/functions/friendDataFetch";
 
 type Middletype = {
     setShowleft: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,7 +16,7 @@ type Middletype = {
 
 const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
 
-    const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat, updateOtherUser } = useStore();
+    const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat } = useStore();
     const [messageList, setMessageList] = useState<null | eachGroupMessageType[]>(null);
     const [lastSeen, setLastSeen] = useState<string | null>(null);
     const [friendName, setFriendName] = useState<string | null>(null);
@@ -55,13 +54,9 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     }, [messageList, selectedChat, user?.uid,])
 
     useEffect(() => {
-        console.log(selectedChat)
         if (otheruser && selectedChat) {
-            let otherUserGet=false;
             otheruser.forEach((eachOtherUser: eachUserType) => {
-                console.log(selectedChat)
-                if (eachOtherUser.uid === selectedChat.user.uid) {
-                    otherUserGet=true;
+                if (eachOtherUser.uid.replaceAll('"','') === selectedChat.user.uid.replaceAll('"','')) {
                     setLastSeen(eachOtherUser.lastSeen);
                     setFriendName(eachOtherUser.username);
                     setFriendToken(eachOtherUser.token);
@@ -74,9 +69,6 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                     
                 }
             })
-            if(otherUserGet==false){
-                friedDataFetch(selectedChat.user.uid,updateOtherUser)
-            }
         }
     }, [selectedChat, otheruser, user?.uid, typing])
 
@@ -130,7 +122,8 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                             <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setTimeout(()=>{setSelectedChat(null)},500) }}></i>
 
                             {
-                                profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-8 w-8 rounded-full object-contain`} /> : <span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+                                profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-8 w-8 rounded-full object-contain`} /> 
+                                : friendName &&<span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                             }
                             
                             <div className="flex flex-col">

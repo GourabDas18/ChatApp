@@ -37,6 +37,10 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
                                     tokenGet(res.data()) ;
                                     formHide()
                                 }
+                                window.localStorage.setItem('user',JSON.stringify(res));
+                                if(window.localStorage.getItem('theme')==null){
+                                    window.localStorage.setItem('theme','light');
+                                }
                             }));
                            
                         })

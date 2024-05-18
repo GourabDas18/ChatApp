@@ -67,7 +67,6 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                 chatData.push(editableChatData)
             }
             chatData.forEach(each=>{
-               
                 writeLocalDB(each)
             });
             setChats([...chatData])
@@ -107,7 +106,8 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                         if(!getChat){
                             each.messages.push(message);
                             if(chatId!==selectedChatref.current?.chatId && message.senderId!==user?.uid){
-                                new Audio(tone).play();
+                                // new Audio(tone).play(); 
+                                tone;
                             }
                              getChat=true;
                         }
