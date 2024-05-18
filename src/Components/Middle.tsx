@@ -6,6 +6,7 @@ import { sendMessageNotification } from "../Controller/functions/sendMessageNoti
 import { chatReadDone } from "../Controller/functions/chatRead";
 import { imageUploadAndMessageSENT } from "../Controller/functions/firebaseImageUpload";
 import ImageView from "../Models/ImageView";
+import { friedDataFetch } from "../Controller/functions/friendDataFetch";
 
 type Middletype = {
     setShowleft: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,13 +17,13 @@ type Middletype = {
 
 const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
 
-    const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat } = useStore();
+    const { selectedChat, otheruser, user, chats, addChatMessage ,setSelectedChat, updateOtherUser } = useStore();
     const [messageList, setMessageList] = useState<null | eachGroupMessageType[]>(null);
     const [lastSeen, setLastSeen] = useState<string | null>(null);
     const [friendName, setFriendName] = useState<string | null>(null);
     const [friendToken, setFriendToken] = useState<string>("");
     const [imgsrc, setImageSrc] = useState<string>("");
-    const [profilePic, setProfilePic] = useState<string>("");
+    const [profilePic, setProfilePic] = useState<string|null>(null);
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
     const inputBox= useRef<HTMLInputElement|null>(null);
     useEffect(() => {
@@ -56,19 +57,26 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     useEffect(() => {
         console.log(selectedChat)
         if (otheruser && selectedChat) {
+            let otherUserGet=false;
             otheruser.forEach((eachOtherUser: eachUserType) => {
                 console.log(selectedChat)
                 if (eachOtherUser.uid === selectedChat.user.uid) {
+                    otherUserGet=true;
                     setLastSeen(eachOtherUser.lastSeen);
                     setFriendName(eachOtherUser.username);
                     setFriendToken(eachOtherUser.token);
                     setTyping(eachOtherUser.typing);
                     if(eachOtherUser.profilePic){
                         setProfilePic(eachOtherUser.profilePic);
+                    }else{
+                        setProfilePic(null)
                     }
                     
                 }
             })
+            if(otherUserGet==false){
+                friedDataFetch(selectedChat.user.uid,updateOtherUser)
+            }
         }
     }, [selectedChat, otheruser, user?.uid, typing])
 
@@ -115,14 +123,14 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
             {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
-            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:absolute md:z-10'>
+            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:fixed md:z-10'>
                 {selectedChat ?
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
                             <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setTimeout(()=>{setSelectedChat(null)},500) }}></i>
 
                             {
-                                profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-10 w-10 rounded-full object-contain`} /> : <span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+                                profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-8 w-8 rounded-full object-contain`} /> : <span className={`h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center ${lastSeen === 'active' && 'ring-4 ring-green-400'}`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                             }
                             
                             <div className="flex flex-col">
@@ -186,8 +194,27 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
 
                                     <p className="mr-auto text-[0.6vw] md:text-[2.5vw] text-yellow-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
                                         {each.status == 'read' ? '✔✔' : '✔'}
-                                        {i>0 &&  messageList[i-1].senderId==user?.uid && <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>}
-                                        {i==0 && <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>}
+                                        
+
+                                        {i>0 &&  messageList[i-1].senderId==user?.uid ?
+                                        
+                                        profilePic && friendName?
+                                        <img src={profilePic} alt={friendName} className={`h-6 w-6 rounded-full absolute -left-7 top-1 object-contain`} />
+                                        
+                                        : <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+                                    
+                                    :<></>
+                                    }
+                                        {i==0 ?
+                                        
+                                        profilePic && friendName?
+                                        <img src={profilePic} alt={friendName} className={`h-6 w-6  rounded-full object-contain absolute -left-7 top-1`} />
+                                        
+                                        : <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>
+                                    
+                                    :<></>
+                                    
+                                    }
                                     </p>
                                 </div>
 

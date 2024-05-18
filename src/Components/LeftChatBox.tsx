@@ -9,7 +9,11 @@ type leftChatBoxType = {
     setShowleft : React.Dispatch<React.SetStateAction<boolean>>
 }
 export type allEachChatType = {
-    'user': string;
+    'user': {
+        'uid':string,
+        'username':string,
+        'profilePic':string|null
+    }
     'messages': eachGroupMessageType; 
     'chatId': string;
 }
@@ -48,17 +52,33 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
             const chatList:allEachChatType[]=[];
             chats.forEach((eachChat)=>{
                 const modifyChat={
-                    user:'',
+                    user:{
+                        uid:'',
+                        username:'',
+                        profilePic:null
+                    },
                     messages:eachChat.messages,
                     chatId:eachChat.chatId
                 };
-                if(eachChat.users[0]!==user?.uid){
-                    modifyChat.user=eachChat.users[0];
+                if(eachChat.users[0].uid ==user?.uid){
+                    modifyChat.user.uid=eachChat.users[1].uid;
+                    modifyChat.user.username=eachChat.users[1].username;
                 }else{
-                    modifyChat.user=eachChat.users[1];
+                    modifyChat.user=eachChat.users[0];
                 }
                 chatList.push(modifyChat)
             })
+            console.log('chatList : ',chatList)
+            chatList.forEach(chat=>{
+                otheruser?.forEach((eachUser:eachUserType)=>{
+                    if(chat.user.uid==eachUser.uid){
+                        if(eachUser.profilePic){
+                            chat.user.profilePic=eachUser.profilePic
+                        }
+                    }
+                })
+            })
+            
             setAllChat([...chatList])
             
         }
