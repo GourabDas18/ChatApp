@@ -1,4 +1,4 @@
-import {  useCallback, useEffect, useMemo, useState } from "react";
+import {  useCallback, useEffect, useState } from "react";
 import { useStore } from "../Context/conext";
 import { eachGroupMessageType, eachUserType } from "../Context/allTypes";
 import { DocumentData } from "firebase/firestore";
@@ -45,21 +45,6 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                 }
                 chatList.push(modifyChat)
             })
-           
-            const chatListWithProfilePic = profilePicSet;
-            if(chatListWithProfilePic){
-                setAllChat([...chatListWithProfilePic!])
-            }else{
-                setAllChat([...chatList])
-            }
-            console.log('chatListWithProfilePic',chatListWithProfilePic)
-          
-        }
-    },[  chats, otheruser, user?.uid])
-    
-    const profilePicSet=useMemo(()=>{
-        if(allchats!==null){
-            const chatList = [...allchats!]
             chatList.forEach(chat=>{
                 otheruser?.forEach((eachUser:eachUserType)=>{
                     if(chat.user.uid.replaceAll('"','')==eachUser.uid.replaceAll('"','')){
@@ -69,10 +54,10 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     }
                 });
             });
-            return([...chatList])
+            setAllChat([...chatList])
         }
-        
-    },[allchats])
+    },[chats, otheruser, user?.uid])
+  
     
 
     const noOfUnreadMessage=useCallback((messageList:eachGroupMessageType[])=>{

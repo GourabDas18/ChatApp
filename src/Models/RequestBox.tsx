@@ -21,7 +21,7 @@ const RequestBox = ({ setRequestFriendShow }: RequestBoxType) => {
    
 
     return (
-        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] md:backdrop-blur-md md:bg-[#ffffffb2] md:shadow-lg md:rounded-lg p-5' ref={friendElement}>
+        <div className='fixed top-[100dvh] min-h-[60%] max-h-[85%] w-[25vw] md:w-[75vw] flex flex-col items-center shadow-lg bg-[#ffffffb0] md:backdrop-blur-md md:bg-[#ffffffb2] md:shadow-lg md:rounded-lg p-5 z-[100]' ref={friendElement}>
             <h1 className="font-medium md:text-sm md:font-semibold my-1">Add in your friends</h1>
             <p className="absolute right-4 top-5 md:top-1 md:right-1  invert-[0.4] opacity-70 cursor-pointer select-none p-2 text-xs rounded-full" onClick={() => { setRequestFriendShow(false) }}>❌</p>
             <div className="flex flex-row items-center">

@@ -22,7 +22,7 @@ const SignUp = () => {
         }
     }
   return (
-    <div className="fixed top-[105dvh] left-[0] rounded-lg bg-white shadow-xl flex flex-col items-center px-6 py-10 border-2 border-slate-50" ref={formElement}>
+    <div className="fixed top-[105dvh] left-[0] rounded-lg bg-white shadow-xl flex flex-col items-center px-6 py-10 border-2 border-slate-50 z-[100]" ref={formElement}>
         <p className="absolute right-4 top-5  invert-[0.4] opacity-70 cursor-pointer select-none p-2 text-xs rounded-full" onClick={formHide}>❌</p>
         <div className="text-blue-400 text-base">
         <img src={chatAppLogo} alt="Chat App Logo" className="w-12 h-12"/>

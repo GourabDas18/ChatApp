@@ -18,7 +18,7 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                         docRes.forEach(each=>{
                             if(each.exists()){
                                 serverChats.push(each.data());
-                            }
+                            }   
                         })
                         setChatListening((old: string[] | null) => {
                             if (old === null) {
@@ -27,12 +27,9 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                 return [...old, chatId]; // Otherwise, append chatId to the existing array
                             }
                         });
-                            updateChat({
-                                chatId:chatId,
-                                messages:serverChats,
-                                users:users
-                            });
+                            updateChat({chatId:chatId, messages:serverChats, users:users });
                             let CheckTime = "100";
+                            console.log("assign checktime",CheckTime)
                                 if (serverChats.length > 0) {
                                     let haveNoUnread=true;
                                     for (let i =0 ; i < serverChats.length; i++) {
@@ -73,54 +70,50 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                 getDocs(collection(db, "chats", chatId,'messages'))
                 .then(docRes => {
                     console.log("CALL FETCHING  CHAT ALL MESSAGE GET FOR NULL CHATLISTENING")
+                    console.log('docres recei',docRes)
                     const serverChats: DocumentData[] =[];
                     docRes.forEach(each=>{
                         if(each.exists()){
                             serverChats.push(each.data());
                         }
                     })
-                        updateChat({
-                            chatId:chatId,
-                            messages:serverChats,
-                            users:users
-                        });
-                        let CheckTime = "100";
-                            if (serverChats.length > 0) {
-                                let haveNoUnread=true;
-                                for (let i =0 ; i < serverChats.length; i++) {
-                                    const element = serverChats[i];
-                                    if (element.status !== 'read' && i>=1) {
-                                        CheckTime=serverChats[i-1].timestamp;
-                                        haveNoUnread=false
-                                       return;
-                                        
-                                    }
-                                    if(CheckTime!=='100') return;
-                                    
+                    updateChat({ chatId:chatId,  messages:serverChats,  users:users });
+                    let CheckTime = "100";
+                    console.log("assign checktime",CheckTime)
+                        if (serverChats.length > 0) {
+                            let haveNoUnread=true;
+                            for (let i =0 ; i < serverChats.length; i++) {
+                                const element = serverChats[i];
+                                if (element.status !== 'read' && i>=1) {
+                                    CheckTime=serverChats[i-1].timestamp;
+                                    haveNoUnread=false
                                 }
-                                if(haveNoUnread){
-                                    if(serverChats[serverChats.length-1].status=='read'){
-                                        CheckTime = serverChats[serverChats.length-1].timestamp
-                                    }
-                                }
+                                if(CheckTime!=='100') i=serverChats.length;
                                 
                             }
-                        console.log("from chatlisten null",chatId,CheckTime)
-                        onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
-                            console.log("CALL FETCHING CHAT")
-                            snapshot.forEach(eachSnap => {
-                                if (eachSnap.exists()) {
-                                    addChatMessage(chatId, eachSnap.data());
+                            if(haveNoUnread){
+                                if(serverChats[serverChats.length-1].status=='read'){
+                                    CheckTime = serverChats[serverChats.length-1].timestamp
                                 }
-                            })
-                        }))
-                        setChatListening((old: string[] | null) => {
-                            if (old === null) {
-                                return [chatId]; // If previous state is null, initialize with [chatId]
-                            } else {
-                                return [...old, chatId]; // Otherwise, append chatId to the existing array
                             }
-                        });
+                            
+                        }
+                    console.log("from chatlisten null",chatId,CheckTime)
+                    onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
+                        console.log("CALL FETCHING CHAT")
+                        snapshot.forEach(eachSnap => {
+                            if (eachSnap.exists()) {
+                                addChatMessage(chatId, eachSnap.data());
+                            }
+                        })
+                    }))
+                    setChatListening((old: string[] | null) => {
+                        if (old === null) {
+                            return [chatId]; // If previous state is null, initialize with [chatId]
+                        } else {
+                            return [...old, chatId]; // Otherwise, append chatId to the existing array
+                        }
+                    });
                        
                     
                 })

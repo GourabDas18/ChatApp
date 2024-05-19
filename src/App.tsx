@@ -24,7 +24,7 @@ function App() {
   const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
   const[showLogin,setShowLogin]=useState<boolean|null>(null);
-  const [messageList,setMessageList]=useState<string[]|null>(null);
+  const [messageList,setMessageList]=useState<string[]>([]);
 
   // for first time user local data load
   useEffect(()=>{
@@ -52,13 +52,14 @@ function App() {
   // if user message list update then it will set
   useEffect(()=>{
     if(user!==null && user?.messageList){
-      const new_message_list:string[]|null = user?.messageList.filter((each:string)=>messageList?.indexOf(each)==-1)
-      if(new_message_list!.length>0 && new_message_list){
+      const new_message_list:string[] = user?.messageList.filter((each:string)=>messageList?.includes(each)==false)
+      if(new_message_list.length>0){
         setMessageList([...new_message_list])
       }
     }
   },[messageList, user])
  useEffect(()=>{
+  console.log("messageList changing",messageList)
   if(messageList&& messageList.length>0 && user){
     messageList.forEach((each:string)=>{
       if(chatlisteing!==null){
@@ -74,7 +75,7 @@ function App() {
     })
     window.localStorage.setItem('user',JSON.stringify(user));
   }
- },[messageList])
+ },[messageList,user])
  
   window.onpagehide=useCallback(()=>{
     if(user){

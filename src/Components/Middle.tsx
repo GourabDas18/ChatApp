@@ -124,7 +124,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
             {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
-            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:fixed md:w-[85dvw] md:z-10'>
+            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:absolute md:w-full md:z-10'>
                 {selectedChat ?
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
