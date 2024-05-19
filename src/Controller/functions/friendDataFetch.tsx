@@ -7,6 +7,7 @@ export const friedDataFetch=(friendId:string,updateOtherUser:(data:eachUserType|
     
     onSnapshot(doc(db,"users",friendId),(result=>{
         if(result.exists()){
+            console.log("CALL FRIEND DATA FETCH")
             updateOtherUser(result.data())
         }
     }))

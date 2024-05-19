@@ -4,11 +4,12 @@ import { db } from "../../firebase"
 import { eachGroupMessageType, eachUserType, messageGroupType } from "../../Context/allTypes"
 type fetchChatFunctionType = (chatId: string, chatListeningRefCurrent: string[] | null, setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>, updateChat: (chatDetails: messageGroupType | DocumentData) => void, addChatMessage: (chatId: string, message: eachGroupMessageType | DocumentData) => void, chats: messageGroupType[] | DocumentData[] | null,user: DocumentData | eachUserType) => void
 
-export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent, setChatListening, updateChat, addChatMessage, chats , user) => {
+export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent, setChatListening, updateChat, addChatMessage , user) => {
     user;
     if (chatListeningRefCurrent) {
         if (chatListeningRefCurrent.indexOf(chatId) === -1) {
             getDoc(doc(db,'chats',chatId)).then(res=>{
+                console.log("CALL FETCHING  CHAT ALL MESSAGE GET FOR CHATLISTENING")
                 if(res.exists()){
                     const users = res.data().users;
                     getDocs(collection(db, "chats", chatId,'messages'))
@@ -19,6 +20,13 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                 serverChats.push(each.data());
                             }
                         })
+                        setChatListening((old: string[] | null) => {
+                            if (old === null) {
+                                return [chatId]; // If previous state is null, initialize with [chatId]
+                            } else {
+                                return [...old, chatId]; // Otherwise, append chatId to the existing array
+                            }
+                        });
                             updateChat({
                                 chatId:chatId,
                                 messages:serverChats,
@@ -47,21 +55,13 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                                 }
                             console.log("from chatlisten null",chatId,CheckTime)
                             onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
+                                console.log("CALL FETCHING CHAT")
                                 snapshot.forEach(eachSnap => {
                                     if (eachSnap.exists()) {
                                         addChatMessage(chatId, eachSnap.data());
                                     }
                                 })
                             }))
-                            setChatListening((old: string[] | null) => {
-                                if (old === null) {
-                                    return [chatId]; // If previous state is null, initialize with [chatId]
-                                } else {
-                                    return [...old, chatId]; // Otherwise, append chatId to the existing array
-                                }
-                            });
-                           
-                        
                     })
                 }
             })
@@ -72,6 +72,7 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                 const users = res.data().users;
                 getDocs(collection(db, "chats", chatId,'messages'))
                 .then(docRes => {
+                    console.log("CALL FETCHING  CHAT ALL MESSAGE GET FOR NULL CHATLISTENING")
                     const serverChats: DocumentData[] =[];
                     docRes.forEach(each=>{
                         if(each.exists()){
@@ -106,6 +107,7 @@ export const fetchChat: fetchChatFunctionType = (chatId, chatListeningRefCurrent
                             }
                         console.log("from chatlisten null",chatId,CheckTime)
                         onSnapshot(query(collection(db, "chats", chatId, "messages"), where("timestamp", ">", CheckTime)), (snapshot => {
+                            console.log("CALL FETCHING CHAT")
                             snapshot.forEach(eachSnap => {
                                 if (eachSnap.exists()) {
                                     addChatMessage(chatId, eachSnap.data());

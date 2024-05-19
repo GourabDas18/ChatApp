@@ -17,18 +17,21 @@ import tokenGet from './Controller/functions/tokenGet';
   
 
 function App() {
-  const { user , updateChat ,setChatFirstTime, chats  , chatListeningRef , setChatListening, addChatMessage, setUser , setOtherUser } =useStore();
+  const { user , updateChat ,setChatFirstTime, chats  , chatListeningRef ,chatlisteing, setChatListening, addChatMessage, setUser , setOtherUser } =useStore();
   const[addFriendShow,setaddFriendShow]=useState<boolean>(false);
   const[requestFriendShow,setRequestFriendShow]=useState<boolean>(false);
   const[localChatLoad,setLocalChatLoad]=useState<boolean>(false);
   const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
   const[showLogin,setShowLogin]=useState<boolean|null>(null);
+  const [messageList,setMessageList]=useState<string[]|null>(null);
+
+  // for first time user local data load
   useEffect(()=>{
-    if(window.localStorage.getItem('user')!==null){
+    if(window.localStorage.getItem('user')!==null){ // for first time otheruser local data load
       setUser(JSON.parse(window.localStorage.getItem('user')!))
     }
-    if(window.localStorage.getItem('otheruser')!==null){
+    if(window.localStorage.getItem('otheruser')!==null){   // for first time otheruser local data load
       setOtherUser(JSON.parse(window.localStorage.getItem('otheruser')!))
     }
     autoLogIn( setUser , setOtherUser , setShowLogin); // Auto login user for first time
@@ -36,30 +39,42 @@ function App() {
   useEffect(()=>{
     if(user && !localChatLoad) {
     loadLocalChat(setChatFirstTime , chats , user , chatListeningRef , setChatListening, addChatMessage); // indexDb chat loading
-    setLocalChatLoad(true);
+    setLocalChatLoad(true); // making local chat switch on. It will true for first time. then it will not run
     if(user.uid){
-      tokenGet(user);
+      tokenGet(user); // user token getting for notification
     }
     
     // only first time loading
     }
   },[addChatMessage, chats, chatListeningRef, localChatLoad, setChatListening, updateChat, user, setChatFirstTime])
  
+
+  // if user message list update then it will set
+  useEffect(()=>{
+    if(user!==null && user?.messageList){
+      const new_message_list:string[]|null = user?.messageList.filter((each:string)=>messageList?.indexOf(each)==-1)
+      if(new_message_list!.length>0 && new_message_list){
+        setMessageList([...new_message_list])
+      }
+    }
+  },[messageList, user])
  useEffect(()=>{
-  if(user?.messageList && user?.messageList.length>0 ){
-    user.messageList.forEach((each:string)=>{
-      if(chatListeningRef.current!==null){
-        if(chatListeningRef.current?.indexOf(each)==-1){
-          fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
+  if(messageList&& messageList.length>0 && user){
+    messageList.forEach((each:string)=>{
+      if(chatlisteing!==null){
+        if(chatlisteing?.indexOf(each)==-1){
+          fetchChat(each,chatlisteing,setChatListening,updateChat,addChatMessage,chats,user);
+          console.log("FETCH CHAT CALLING FROM APP TSX",chatlisteing)
         }
       }else{
-        fetchChat(each,chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,user);
+        console.log("FETCH CHAT CALLING FROM APP TSX chatlistening null")
+        fetchChat(each,chatlisteing,setChatListening,updateChat,addChatMessage,chats,user);
       }
      
     })
     window.localStorage.setItem('user',JSON.stringify(user));
   }
- },[user, chatListeningRef, setChatListening, updateChat, addChatMessage, chats])
+ },[messageList])
  
   window.onpagehide=useCallback(()=>{
     if(user){
@@ -71,6 +86,7 @@ function App() {
   window.onblur=useCallback(()=>{
     if(user){
       if(user?.lastSeen==='active'){
+        console.log("USER DOC UPDATE REQUEST")
         updateDoc(doc(db,"users",user?.uid),{'lastSeen':new Date().toLocaleTimeString()})
       }
     }

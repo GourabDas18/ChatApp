@@ -10,6 +10,7 @@ type storeType = {
     otheruser: null | eachUserType[] | DocumentData;
     setUser: React.Dispatch<React.SetStateAction<null | eachUserType | DocumentData>>;
     setOtherUser: React.Dispatch<React.SetStateAction<null | eachUserType[] | DocumentData[]>>;
+    chatlisteing:string[]|null;
     chatListeningRef: RefObject<string[] | null>;
     setChatListening: React.Dispatch<React.SetStateAction<string[] | null>>;
     chats: messageGroupType[] | DocumentData[] | null;
@@ -29,7 +30,7 @@ const Store = createContext<null | storeType>(null);
 export const StoreFunction = ({ children }: StoreFunctionProps) => {
     const [user, setUser] = useState<null | eachUserType | DocumentData>(null);
     const [otheruser, setOtherUser] = useState<null | eachUserType[] | DocumentData[]>(null);
-    const [, setChatListening, chatListeningRef] = useState<string[] | null>(null);
+    const [chatlisteing, setChatListening, chatListeningRef] = useState<string[] | null>(null);
     const [chats, setChats,chatref] = useState<messageGroupType[] | DocumentData[] | null>(null);
     const [selectedChat, setSelectedChat,selectedChatref] = useState<messageGroupType | DocumentData | null>(null);
 
@@ -131,7 +132,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     }
 
     return (
-        <Store.Provider value={{ user, setUser, otheruser, setOtherUser, chatListeningRef, setChatListening, chats, updateChat, setChatFirstTime,updateOtherUser, selectedChat, setSelectedChat, addChatMessage }}>
+        <Store.Provider value={{ user, setUser, otheruser, setOtherUser,chatlisteing, chatListeningRef, setChatListening, chats, updateChat, setChatFirstTime,updateOtherUser, selectedChat, setSelectedChat, addChatMessage }}>
             {children}
         </Store.Provider>
     )

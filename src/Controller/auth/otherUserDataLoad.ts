@@ -6,6 +6,7 @@ type otherUserDataLoadType=(myId:string,setOtherUser:React.Dispatch<React.SetSta
 
 export const otherUserDataLoad:otherUserDataLoadType=(myId,setOtherUser)=>{
     onSnapshot(query(collection(db,"users"),where("__name__", "!=", myId)),(result=>{
+        console.log("CALL FROM OTHER USER DATA FETCH")
         const otherUserData:DocumentData[]=[];
         result.forEach(each=>{
             if(each.exists()){

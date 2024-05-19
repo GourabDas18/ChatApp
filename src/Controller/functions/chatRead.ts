@@ -14,7 +14,7 @@ export const chatReadDone:chatReadDone=(chatId,timestamp,senderId)=>{
     getDocs(q).then(res=>{
         res.forEach(each=>{
             if(each.exists()){
-               
+                console.log("CALL FROM UPDATING CHAT MESSAGES")
                 updateDoc(doc(db,'chats',chatId,'messages',each.id),{status:'read'})
                 .catch(error=>console.log(error));
             }

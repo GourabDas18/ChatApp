@@ -16,6 +16,7 @@ const autoLogIn=(setUser:React.Dispatch<React.SetStateAction<null|eachUserType|D
             }
             otherUserDataLoad(res.uid,setOtherUser);
             onSnapshot(doc(db,'users',res.uid),(result=>{
+                console.log("CALL FROM AUTH STATE CHANGE")
                 if(result.exists()){
                     if(result.data().profilePic==null){
                         updateDoc(doc(db,'users',res.uid),{'profilePic':res.photoURL})

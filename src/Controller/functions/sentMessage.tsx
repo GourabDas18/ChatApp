@@ -6,6 +6,7 @@ type sentMessageType=(senderId:string,chatId:string,messageText:string)=>void
 
 export const sentMessage:sentMessageType=(senderId,chatId,messageText)=>{
     if(messageText!==""){
+        console.log("CALL MESSAGE SENDING")
         const timestamp =new Date().getTime().toString();
         const updateData:eachGroupMessageType = {
             senderId:senderId,

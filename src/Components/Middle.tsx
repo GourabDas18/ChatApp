@@ -26,6 +26,32 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
     const inputBox= useRef<HTMLInputElement|null>(null);
     useEffect(() => {
+        if (otheruser && selectedChat) {
+            otheruser.forEach((eachOtherUser: eachUserType) => {
+                if (eachOtherUser.uid.replaceAll('"','') === selectedChat.user.uid.replaceAll('"','')) {
+                    setLastSeen(eachOtherUser.lastSeen);
+                    setFriendName(eachOtherUser.username);
+                    setFriendToken(eachOtherUser.token);
+                    setTyping(eachOtherUser.typing);
+                    if(eachOtherUser.profilePic){
+                        setProfilePic(eachOtherUser.profilePic);
+                    }else{
+                        setProfilePic(null)
+                    }
+                    
+                }
+            })
+        }else{
+                    setLastSeen(null);
+                    setFriendName(null);
+                    setFriendToken("");
+                    setTyping(null);
+                    setMessageList(null);
+                    setImageSrc("");
+        }
+    }, [selectedChat, otheruser, user?.uid, typing])
+
+    useEffect(() => {
         if (chats && selectedChat) {
             chats.forEach((chatEach) => {
                 if (chatEach.chatId === selectedChat?.chatId) {
@@ -53,24 +79,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         }
     }, [messageList, selectedChat, user?.uid,])
 
-    useEffect(() => {
-        if (otheruser && selectedChat) {
-            otheruser.forEach((eachOtherUser: eachUserType) => {
-                if (eachOtherUser.uid.replaceAll('"','') === selectedChat.user.uid.replaceAll('"','')) {
-                    setLastSeen(eachOtherUser.lastSeen);
-                    setFriendName(eachOtherUser.username);
-                    setFriendToken(eachOtherUser.token);
-                    setTyping(eachOtherUser.typing);
-                    if(eachOtherUser.profilePic){
-                        setProfilePic(eachOtherUser.profilePic);
-                    }else{
-                        setProfilePic(null)
-                    }
-                    
-                }
-            })
-        }
-    }, [selectedChat, otheruser, user?.uid, typing])
+
 
     const blobMaker = async (e: FormEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -115,11 +124,12 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
         <div className='w-[55%] md:w-full bg-[#ffffff77] min-h-full flex flex-col'>
             {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
-            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:fixed md:z-10'>
+            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white flex flex-row items-center px-5 py-2 md:fixed md:w-[85dvw] md:z-10'>
                 {selectedChat ?
                     <div className="flex w-full flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-[0.5vw] md:gap-2">
                             <i className="fi fi-sr-angle-small-left text-2xl md:block xl:hidden top-1 -ml-2" onClick={() => { setShowleft((showleft) => !showleft);setTimeout(()=>{setSelectedChat(null)},500) }}></i>
+
 
                             {
                                 profilePic && friendName?<img src={profilePic} alt={friendName} className={`h-8 w-8 rounded-full object-contain`} /> 
@@ -174,7 +184,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                             :
                             <>
                                
-                                <div className={`px-3 py-1 ml-3 max-w-[80%] bg-pink-50 md:px-[1.5vw] md:py-[1vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
+                                <div className={`px-3 py-1 max-w-[80%] bg-pink-50 md:px-[1.5vw] md:py-[1vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} ${i>0 &&  messageList[i-1].senderId==user?.uid ?' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
                                     {each.type ?
                                         <>
                                             <img src={each.content} alt={'image message'} className={`max-h-56 w-auto object-cover ${each.upload !== null ? ' brightness-75' : ''}`} onClick={()=>{setImageSrc(each.content);setImageShow(true)}}/>
@@ -189,7 +199,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         {each.status == 'read' ? '✔✔' : '✔'}
                                         
 
-                                        {i>0 &&  messageList[i-1].senderId==user?.uid ?
+                                        {/* {i>0 &&  messageList[i-1].senderId==user?.uid ?
                                         
                                         profilePic && friendName?
                                         <img src={profilePic} alt={friendName} className={`h-6 w-6 rounded-full absolute -left-7 top-1 object-contain`} />
@@ -197,9 +207,10 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         : <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                                     
                                     :<></>
-                                    }
-                                        {i==0 ?
+                                    } */}
+                                        {/* {i==0 ?
                                         
+                                        <div className="min-w-5 min-h-5 bg-red-500 rot"></div>
                                         profilePic && friendName?
                                         <img src={profilePic} alt={friendName} className={`h-6 w-6  rounded-full object-contain absolute -left-7 top-1`} />
                                         
@@ -207,7 +218,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                     
                                     :<></>
                                     
-                                    }
+                                    } */}
                                     </p>
                                 </div>
 

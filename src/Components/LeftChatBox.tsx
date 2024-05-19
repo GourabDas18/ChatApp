@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import {  useCallback, useEffect, useMemo, useState } from "react";
 import { useStore } from "../Context/conext";
-import { eachGroupMessageType, eachUserType, messageGroupType } from "../Context/allTypes";
-import { friedDataFetch } from "../Controller/functions/friendDataFetch";
+import { eachGroupMessageType, eachUserType } from "../Context/allTypes";
 import { DocumentData } from "firebase/firestore";
 
 
@@ -18,41 +17,12 @@ export type allEachChatType = {
     'chatId': string;
 }
 const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
-    const { user, otheruser, updateOtherUser, chats, setSelectedChat } = useStore();
+    const { user, otheruser, chats, setSelectedChat } = useStore();
     const [ allchats , setAllChat] = useState<null | allEachChatType[] | DocumentData[]>(null);
-
-    const chatUserDataGet = useCallback((chats:messageGroupType[] | DocumentData[] | null) => {
-        chats?.forEach(each => {
-            let data = null;
-            if (each.users[0].uid === user?.uid) {
-                otheruser?.forEach((otherEach: eachUserType) => {
-                    if (each.users[1].uid === otherEach.uid) {
-                        data = otherEach;
-                    }
-                })
-                if(data===null){
-                    friedDataFetch(each.users[1].uid, updateOtherUser)
-                }
-            }else{
-                otheruser?.forEach((otherEach: eachUserType) => {
-                    if (each.users[0].uid === otherEach.uid) {
-                        data = otherEach;
-                    }
-                })
-                if(data===null){
-                    friedDataFetch(each.users[0].uid, updateOtherUser)
-                }
-            }
-        })
-    },[otheruser, updateOtherUser, user?.uid])
-
-    
     useEffect(()=>{
         if(chats){
-            chatUserDataGet(chats);
             const chatList:allEachChatType[]=[];
             chats.forEach((eachChat)=>{
-
                 const modifyChat={
                     user:{
                         uid:'',
@@ -66,37 +36,53 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     })],
                     chatId:eachChat.chatId
                 };
-                if(eachChat.users[0].uid.replaceAll('"','') ==user?.uid.replaceAll('"','')){
+                if(eachChat.users[0].uid.replaceAll('"','') ===user?.uid.replaceAll('"','')){
                     modifyChat.user.uid=eachChat.users[1].uid;
                     modifyChat.user.username=eachChat.users[1].username;
                 }else{
-                    modifyChat.user=eachChat.users[0];
+                    modifyChat.user.uid=eachChat.users[0].uid;
+                    modifyChat.user.username=eachChat.users[0].username;
                 }
                 chatList.push(modifyChat)
             })
+           
+            const chatListWithProfilePic = profilePicSet;
+            if(chatListWithProfilePic){
+                setAllChat([...chatListWithProfilePic!])
+            }else{
+                setAllChat([...chatList])
+            }
+            console.log('chatListWithProfilePic',chatListWithProfilePic)
+          
+        }
+    },[  chats, otheruser, user?.uid])
+    
+    const profilePicSet=useMemo(()=>{
+        if(allchats!==null){
+            const chatList = [...allchats!]
             chatList.forEach(chat=>{
                 otheruser?.forEach((eachUser:eachUserType)=>{
-                    if(chat.user.uid==eachUser.uid){
+                    if(chat.user.uid.replaceAll('"','')==eachUser.uid.replaceAll('"','')){
                         if(eachUser.profilePic){
                             chat.user.profilePic=eachUser.profilePic
                         }
                     }
-                })
-            })
-            
-            setAllChat([...chatList])
-            console.log(allchats)
+                });
+            });
+            return([...chatList])
         }
-    },[chatUserDataGet, chats, otheruser, setSelectedChat, user?.uid])
+        
+    },[allchats])
+    
 
-    const noOfUnreadMessage=(messageList:eachGroupMessageType[])=>{
+    const noOfUnreadMessage=useCallback((messageList:eachGroupMessageType[])=>{
         if(messageList){
             const noOfMessage=messageList.filter(each=>each.status!=='read'&&each.senderId!==user?.uid);
             return noOfMessage.length;
         }else{
             return 0;
         }
-    }
+    },[user?.uid])
     
 
     return (
@@ -113,13 +99,13 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     }
                     
                     {
-                    each.user?.profilePic?<img src={each.user.profilePic} alt={each.user.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user.username.substring(0, 1).toUpperCase()}</span>
+                    each.user?.profilePic?<img src={each.user.profilePic} alt={each.user?.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user?.username.substring(0, 1).toUpperCase()}</span>
                     }
 
                   
                     <div className="flex flex-col items-start ml-1">
                         <div className="flex flex-col">
-                        <p className="text-[0.9vw] md:text-sm font-medium">{each.user.username}</p>
+                        <p className="text-[0.9vw] md:text-sm font-medium">{each.user?.username}</p>
                         <p className="text-[0.75vw] md:text-xs">
                             {each.messages.length > 0 
                             ? 

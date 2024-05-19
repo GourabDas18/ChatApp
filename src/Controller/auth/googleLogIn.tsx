@@ -10,6 +10,7 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
         const result = await signInWithPopup(auth, provider);
         if (result.user) {
             onSnapshot(doc(db, "users", result.user.uid), ((res) => {
+                console.log("CALL FROM GOOGLE LOGIN STATE CHANGE")
                 if (res.exists()) {
                     setUser(res.data());
                     tokenGet(res.data()) ;
@@ -32,6 +33,7 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
                     setDoc(doc(db, "users", result.user.uid), createData)
                         .then(() => {
                             onSnapshot(doc(db, "users", result.user.uid), ((res) => {
+                                console.log("CALL FROM GOOGLE LOGIN USER DATA CHANGE STATE CHANGE")
                                 if (res.exists()) {
                                     setUser(res.data());
                                     tokenGet(res.data()) ;
