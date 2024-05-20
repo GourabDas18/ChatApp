@@ -45,11 +45,21 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
             })
             if (!haveChat) {
                 const editableChatData = chatDetails;
+                editableChatData.messages = editableChatData.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                    if (a.timestamp > b.timestamp) return -1;
+                    if (b.timestamp > a.timestamp) return 1;
+                    return 0; // Add this line to handle the case when timestamps are equal
+                });
                 chatData.push(editableChatData)
             }
             setChats([...chatData])
         } else {
             const editableChatData = chatDetails;
+            editableChatData.messages = editableChatData.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                if (a.timestamp > b.timestamp) return -1;
+                if (b.timestamp > a.timestamp) return 1;
+                return 0; // Add this line to handle the case when timestamps are equal
+            });
             setChats([editableChatData]);
         }
 
@@ -65,6 +75,11 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
             })
             if (!haveChat) {
                 const editableChatData = chatDetails;
+                editableChatData.messages = editableChatData.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                    if (a.timestamp > b.timestamp) return -1;
+                    if (b.timestamp > a.timestamp) return 1;
+                    return 0; // Add this line to handle the case when timestamps are equal
+                });
                 chatData.push(editableChatData)
             }
             chatData.forEach(each=>{
@@ -73,6 +88,11 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
             setChats([...chatData])
         } else {
             const editableChatData = chatDetails;
+            editableChatData.messages = editableChatData.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                if (a.timestamp > b.timestamp) return -1;
+                if (b.timestamp > a.timestamp) return 1;
+                return 0; // Add this line to handle the case when timestamps are equal
+            });
             writeLocalDB(editableChatData);
             setChats([editableChatData]);
         }
@@ -89,6 +109,11 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                 if (each.chatId === chatId) {
                     if(each.messages.length==0){
                         each.messages=[message];
+                        each.messages = each.messages.sort((a: eachGroupMessageType, b: eachGroupMessageType) => {
+                            if (a.timestamp > b.timestamp) return -1;
+                            if (b.timestamp > a.timestamp) return 1;
+                            return 0; // Add this line to handle the case when timestamps are equal
+                        });
                         getChat=true;
                     }else{
                         if(getChat){return}
@@ -107,8 +132,8 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                         if(!getChat){
                             each.messages.push(message);
                             if(chatId!==selectedChatref.current?.chatId && message.senderId!==user?.uid){
-                                // new Audio(tone).play(); 
-                                tone;
+                                 new Audio(tone).play(); 
+                                
                             }
                              getChat=true;
                         }

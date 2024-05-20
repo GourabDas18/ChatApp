@@ -2,7 +2,7 @@ import { collection, doc, getDocs, query, updateDoc, where } from "firebase/fire
 
 import { db } from "../../firebase"
 
-type chatReadDone=(chatId:string,timestamp:string,senderId:string)=>void
+type chatReadDone=(chatId:string,timestamp:number,senderId:string)=>void
 
 export const chatReadDone:chatReadDone=(chatId,timestamp,senderId)=>{
     const q = query(

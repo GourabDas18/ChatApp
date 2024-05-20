@@ -2,7 +2,6 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { eachUserType } from "../../Context/allTypes";
-import tokenGet from "../functions/tokenGet";
 
 export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<null | eachUserType[] | DocumentData>>, formHide: () => void) => {
     try {
@@ -13,7 +12,6 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
                 console.log("CALL FROM GOOGLE LOGIN STATE CHANGE")
                 if (res.exists()) {
                     setUser(res.data());
-                    tokenGet(res.data()) ;
                     formHide();
                    
                 } else {
@@ -36,7 +34,6 @@ export const googleLogin = async (setUser: React.Dispatch<React.SetStateAction<n
                                 console.log("CALL FROM GOOGLE LOGIN USER DATA CHANGE STATE CHANGE")
                                 if (res.exists()) {
                                     setUser(res.data());
-                                    tokenGet(res.data()) ;
                                     formHide()
                                 }
                                 window.localStorage.setItem('user',JSON.stringify(res));

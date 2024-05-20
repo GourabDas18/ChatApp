@@ -25,7 +25,8 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
     const [profilePic, setProfilePic] = useState<string|null>(null);
     const [typing, setTyping] = useState<{ 'chatId': string; 'status': boolean } | null>(null);
     const inputBox= useRef<HTMLInputElement|null>(null);
-    useEffect(() => {
+
+    const chatFriendDataSet=useCallback(()=>{
         if (otheruser && selectedChat) {
             otheruser.forEach((eachOtherUser: eachUserType) => {
                 if (eachOtherUser.uid.replaceAll('"','') === selectedChat.user.uid.replaceAll('"','')) {
@@ -43,12 +44,15 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             })
         }else{
                     setLastSeen(null);
-                    setFriendName(null);
+                    setFriendName(null); 
                     setFriendToken("");
                     setTyping(null);
                     setMessageList(null);
                     setImageSrc("");
         }
+    },[otheruser, selectedChat])
+    useEffect(() => {
+        chatFriendDataSet();
     }, [selectedChat, otheruser, user?.uid, typing])
 
     useEffect(() => {
@@ -73,7 +77,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             const unreadList = messageList.filter(each => each.senderId !== user.uid && each.status !== 'read');
             if (unreadList.length > 0) {
                 unreadList.forEach(each => {
-                    chatReadDone(selectedChat.chatId, each.timestamp, each.senderId)
+                    chatReadDone(selectedChat.chatId, parseInt(each.timestamp.toString()), each.senderId)
                 })
             }
         }
@@ -88,7 +92,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             const tempData: eachGroupMessageType = {
                 senderId: user?.uid,
                 content: reader.result!.toString(),
-                timestamp: new Date().getTime().toString(),
+                timestamp: new Date().getTime(),
                 status: "sent",
                 upload: true
             }
@@ -96,7 +100,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
             //Uploading fre store
             const uploaded = await imageUploadAndMessageSENT(tempData, selectedChat?.chatId, addChatMessage);
             if (uploaded) {
-                const removedImage = messageList?.filter(each => each.timestamp !== tempData.timestamp && each.senderId !== tempData.senderId)
+                const removedImage = messageList?.filter(each => parseInt(each.timestamp.toString()) !== tempData.timestamp && each.senderId !== tempData.senderId)
                 setMessageList([...removedImage!]);
             }
         }
@@ -159,7 +163,7 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                 <div className={`px-[1vw] py-[0.45vw] md:px-[1.5vw] md:py-[1vw] bg-blue-50 ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-bl-lg ' : ' rounded-lg '} ml-auto max-w-[80%] rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`} key={each.senderId + i}>
                                     {each.type || each.content.includes('base64') ?
                                         <>
-                                            <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={each.timestamp + 'img'} onClick={()=>{setImageSrc(each.content); setImageShow(prev=>!prev)}}/>
+                                            <img src={each.content} alt={'image message'} className={`h-56 w-auto object-cover ${each.upload ? ' brightness-75' : ' brightness-100'}`} key={parseInt(each.timestamp.toString()) + 'img'} onClick={()=>{setImageSrc(each.content); setImageShow(prev=>!prev)}}/>
                                             {each.upload && <p className="absolute top-0 left-0 text-white text-xs px-4 py-1 bg-violet-900 rounded-full m-2">Uploading ...</p>}
                                         </>
 
@@ -167,24 +171,24 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         <p className="text-[0.9vw] md:text-sm font-medium">{each.content}</p>
                                     }
 
-                                    <p className="ml-auto text-[0.6vw] md:text-[2.5vw] text-blue-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
+                                    <p className="ml-auto text-[0.6vw] md:text-[2.5vw] text-blue-900">{new Date(parseInt(each.timestamp.toString())).toLocaleTimeString()}
                                         {each.status == 'read' ? '✔✔' : '✔'}
                                     </p>
                                 </div>
 
                                 {
                                      i == messageList.length-1 ?
-                                     <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1"> {new Date(parseInt(messageList[messageList.length-1].timestamp)).toLocaleDateString()} </div>
+                                     <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1"key={i+5}> {new Date(parseInt(messageList[messageList.length-1].timestamp.toString())).toLocaleDateString()} </div>
                                      :
-                                     new Date(parseInt(messageList[i].timestamp)).toLocaleDateString() !== new Date(parseInt(messageList[i + 1].timestamp)).toLocaleDateString() &&
-                                     <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1">{new Date(parseInt(messageList[i].timestamp)).toLocaleDateString()}</div>
+                                     new Date(parseInt(messageList[i].timestamp.toString())).toLocaleDateString() !== new Date(parseInt(messageList[i + 1].timestamp.toString())).toLocaleDateString() &&
+                                     <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1" key={i+5}>{new Date(parseInt(messageList[i].timestamp.toString())).toLocaleDateString()}</div>
                                 }
 
                             </>
                             :
                             <>
                                
-                                <div className={`px-3 py-1 max-w-[80%] bg-pink-50 md:px-[1.5vw] md:py-[1vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} ${i>0 &&  messageList[i-1].senderId==user?.uid ?' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col`}>
+                                <div className={`px-3 py-1 max-w-[80%] bg-pink-50 md:px-[1.5vw] md:py-[1vw] ring-1 ring-white shadow-lg my-1 w-fit ${i == 0 ? ' rounded-br-lg ' : ' rounded-lg '} ${i>0 &&  messageList[i-1].senderId==user?.uid ?' rounded-br-lg ' : ' rounded-lg '} mr-auto  rounded-tl-lg rounded-tr-lg text-[0.9vw] flex flex-col ml-3`} key={i+5}>
                                     {each.type ?
                                         <>
                                             <img src={each.content} alt={'image message'} className={`max-h-56 w-auto object-cover ${each.upload !== null ? ' brightness-75' : ''}`} onClick={()=>{setImageSrc(each.content);setImageShow(true)}}/>
@@ -195,11 +199,11 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         <p className="text-[0.9vw] md:text-sm font-medium">{each.content}</p>
                                     }
 
-                                    <p className="mr-auto text-[0.6vw] md:text-[2.5vw] text-yellow-900">{new Date(parseInt(each.timestamp)).toLocaleTimeString()}
+                                    <p className="mr-auto text-[0.6vw] md:text-[2.5vw] text-yellow-900">{new Date(parseInt(each.timestamp.toString())).toLocaleTimeString()}
                                         {each.status == 'read' ? '✔✔' : '✔'}
                                         
 
-                                        {/* {i>0 &&  messageList[i-1].senderId==user?.uid ?
+                                         {i>0 &&  messageList[i-1].senderId==user?.uid ?
                                         
                                         profilePic && friendName?
                                         <img src={profilePic} alt={friendName} className={`h-6 w-6 rounded-full absolute -left-7 top-1 object-contain`} />
@@ -207,10 +211,9 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                         : <span className={`h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] rounded-full -left-8 top-1 text-white bg-slate-700 flex items-center justify-center absolute`}>{friendName?.substring(0, 1).toUpperCase()}</span>
                                     
                                     :<></>
-                                    } */}
-                                        {/* {i==0 ?
+                                    } 
+                                         {i==0 ?
                                         
-                                        <div className="min-w-5 min-h-5 bg-red-500 rot"></div>
                                         profilePic && friendName?
                                         <img src={profilePic} alt={friendName} className={`h-6 w-6  rounded-full object-contain absolute -left-7 top-1`} />
                                         
@@ -218,16 +221,16 @@ const Middle = ({ setShowleft,imageShow,setImageShow }: Middletype) => {
                                     
                                     :<></>
                                     
-                                    } */}
+                                    } 
                                     </p>
                                 </div>
 
                                 {
                                     i == messageList.length-1 ?
-                                        <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1"> {new Date(parseInt(messageList[messageList.length-1].timestamp)).toLocaleDateString()} </div>
+                                        <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1"> {new Date(parseInt(messageList[messageList.length-1].timestamp.toString())).toLocaleDateString()} </div>
                                         :
-                                        new Date(parseInt(messageList[i].timestamp)).toLocaleDateString() !== new Date(parseInt(messageList[i + 1].timestamp)).toLocaleDateString() &&
-                                        <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1">{new Date(parseInt(messageList[i].timestamp)).toLocaleDateString()}</div>
+                                        new Date(parseInt(messageList[i].timestamp.toString())).toLocaleDateString() !== new Date(parseInt(messageList[i + 1].timestamp.toString())).toLocaleDateString() &&
+                                        <div className="w-20 my-2 text-[0.7vw] md:text-[2.4vw] md:my-8 border-y-2 border-violet-300 text-violet-900 m-auto px-4 py-1">{new Date(parseInt(messageList[i].timestamp.toString())).toLocaleDateString()}</div>
                                 }
 
                             </>

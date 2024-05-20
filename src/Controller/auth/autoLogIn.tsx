@@ -2,7 +2,7 @@ import { onAuthStateChanged } from "firebase/auth"
 import { auth, db } from "../../firebase"
 import { eachUserType } from "../../Context/allTypes"
 import { DocumentData, doc, onSnapshot, updateDoc} from "firebase/firestore"
-import { otherUserDataLoad } from "./otherUserDataLoad"
+import { otherUserDataLoad } from "./otherUserDataLoad";
 
 const autoLogIn=(setUser:React.Dispatch<React.SetStateAction<null|eachUserType|DocumentData>>,
     setOtherUser:React.Dispatch<React.SetStateAction<null|eachUserType[]|DocumentData[]>>,setShowLogin: React.Dispatch<React.SetStateAction<boolean | null>>

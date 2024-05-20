@@ -1,11 +1,14 @@
 import { DocumentData } from "firebase/firestore";
-import { eachGroupMessageType, eachUserType, messageGroupType } from "../../Context/allTypes";
-import { RefObject } from "react";
+import {  eachUserType, messageGroupType } from "../../Context/allTypes";
+import autoLogIn from "../auth/autoLogIn";
 
-type loadLocalChatType = (setChatFirstTime:(chatDetails: messageGroupType | DocumentData)=>void,chats:messageGroupType[] | DocumentData[] | null,user:null | eachUserType | DocumentData,chatListeningRef: RefObject<string[] | null>, setChatListening:React.Dispatch<React.SetStateAction<string[] | null>>,addChatMessage:(chatId:string,message:eachGroupMessageType|DocumentData)=>void)=>void
+type loadLocalChatType = (setChatFirstTime:(chatDetails: messageGroupType | DocumentData)=>void,chats:messageGroupType[] | DocumentData[] | null,
+setUser: React.Dispatch<React.SetStateAction<eachUserType | DocumentData | null>>,
+setOtherUser: React.Dispatch<React.SetStateAction<DocumentData[] | eachUserType[] | null>>,
+setShowLogin: React.Dispatch<React.SetStateAction<boolean | null>>
+)=>void
 
-export const loadLocalChat:loadLocalChatType=(setChatFirstTime:(chatDetails: messageGroupType|DocumentData) => void,chats:messageGroupType[] | DocumentData[] | null,
-)=>{
+export const loadLocalChat:loadLocalChatType=(setChatFirstTime,chats,setUser,setOtherUser,setShowLogin)=>{
     const request = window.indexedDB.open('chatApp',1);
     let newOne=false;
     request.onerror=(error)=>{
@@ -29,13 +32,26 @@ export const loadLocalChat:loadLocalChatType=(setChatFirstTime:(chatDetails: mes
                         setChatFirstTime(each)
                     });                 
             }
-          
+            if(window.localStorage.getItem('user')!==null){ // for first time otheruser local data load
+                setUser(JSON.parse(window.localStorage.getItem('user')!))
+              }
+              if(window.localStorage.getItem('otheruser')!==null){   // for first time otheruser local data load
+                setOtherUser(JSON.parse(window.localStorage.getItem('otheruser')!))
+              }
+              autoLogIn( setUser , setOtherUser , setShowLogin);
           }
         }else{
             const transaction = request.result.transaction('messageGroup', 'readwrite');
             // Get the object store
             transaction.objectStore('messageGroup');
             request.result.close();
+            if(window.localStorage.getItem('user')!==null){ // for first time otheruser local data load
+                setUser(JSON.parse(window.localStorage.getItem('user')!))
+              }
+              if(window.localStorage.getItem('otheruser')!==null){   // for first time otheruser local data load
+                setOtherUser(JSON.parse(window.localStorage.getItem('otheruser')!))
+              }
+              autoLogIn( setUser , setOtherUser , setShowLogin);
         }
     }
 

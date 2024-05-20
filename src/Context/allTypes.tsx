@@ -37,7 +37,7 @@ export type eachUserType = {
 export type eachGroupMessageType={
     "senderId": string,
     "content": string,
-    "timestamp": string,
+    "timestamp": number,
     "status": "sent"| "deliverd" | "read" ,
     'type'?:string,
     'upload'?:boolean
