@@ -54,7 +54,7 @@ export const fetchChat: fetchChatFunctionType =
             if (haveNoUnread) {
               CheckTime = Math.max(...readMessage)
             }else{
-                CheckTime = Math.max(...times)
+                CheckTime = Math.min(...times)
             }
           }
           console.log("calling chat for",CheckTime,chatId)
