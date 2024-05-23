@@ -38,6 +38,7 @@ export const fetchChat: fetchChatFunctionType =
           
           if (serverChats.length > 0) {
             const times:number[]=[];
+            const timesLog:string[]=[];
             const readMessage:number[]=[];
             let haveNoUnread = true;
             for (let i = 0; i < serverChats.length; i++) {
@@ -45,6 +46,7 @@ export const fetchChat: fetchChatFunctionType =
                 const element = serverChats[i];
                 if (element.status !== 'read') {
                     times.push(element.timestamp)
+                    timesLog.push(element.content)
                   haveNoUnread = false;
                 }else{
                     readMessage.push(element.timestamp)
@@ -54,6 +56,7 @@ export const fetchChat: fetchChatFunctionType =
             if (haveNoUnread) {
               CheckTime = Math.max(...readMessage)
             }else{
+              console.log(times,timesLog)
                 CheckTime = Math.min(...times)
             }
           }

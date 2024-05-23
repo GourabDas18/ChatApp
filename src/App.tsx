@@ -11,10 +11,12 @@ import Middle from './Components/Middle';
 import { loadLocalChat } from './Controller/localDatabase/indexDBInIt';
 import { fetchChat } from './Controller/functions/fetchChat';
 import { ToastContainer } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import tokenGet from './Controller/functions/tokenGet';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
+import Right from './Components/Right';
+
   
 
 function App() {
@@ -23,7 +25,9 @@ function App() {
   const[requestFriendShow,setRequestFriendShow]=useState<boolean>(false);
   const[localChatLoad,setLocalChatLoad]=useState<boolean>(false);
   const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
+  const[imageModuleShowRight,setImageModuleShowRight]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
+  const[showRight,setShowRight]=useState<boolean>(true);
   const[showLogin,setShowLogin]=useState<boolean|null>(null);
   const [messageList,setMessageList]=useState<string[]>([]);
   const [fistTimeTokenGet,setFirstTimeTokenGet]=useState<boolean>(false);
@@ -129,9 +133,10 @@ function App() {
   },[])
   return (
       <>
-      <div className='mainDiv flex flex-row md:w-full md:h-full rounded-md'>
+      <div className='mainDiv dark:bg-[#2d2a2a8a] flex flex-row md:w-full md:h-full rounded-md'>
       <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft}/>
-      <Middle setShowleft={setShowleft} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
+      <Middle setShowleft={setShowleft} setShowRight={setShowRight} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
+      <Right imageModuleShowRight={imageModuleShowRight} setImageModuleShowRight={setImageModuleShowRight} setShowRight={setShowRight} showRight={showRight}/>
       </div>
       {showLogin && <SignUp />}
       {addFriendShow && <FriendBox setaddFriendShow={setaddFriendShow}/>}

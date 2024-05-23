@@ -12,7 +12,6 @@
 }
 *{
   position: relative;
-  scroll-behavior: smooth;
 }
 .transitionNeed{
   transition: 0.4s ease;
@@ -63,4 +62,24 @@ body{
     overflow: hidden;
     background-color: #6494ed42
   }
+
+}
+/* width */
+::-webkit-scrollbar {
+  width: 0.7rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #515050; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }

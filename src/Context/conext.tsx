@@ -4,7 +4,6 @@ import { eachGroupMessageType, eachUserType, messageGroupType } from "./allTypes
 import { DocumentData } from "firebase/firestore";
 import { writeLocalDB } from "../Controller/localDatabase/writeLocalDB";
 import tone from "../assets/message.mp3";
-import { allEachChatType } from "../Components/LeftChatBox";
 type storeType = {
     user: null | eachUserType | DocumentData;
     otheruser: null | eachUserType[] | DocumentData;
@@ -18,8 +17,8 @@ type storeType = {
     setChatFirstTime: (chatDetails: messageGroupType | DocumentData) => void;
     addChatMessage: (chatId:string,message:eachGroupMessageType|DocumentData)=>void;
     updateOtherUser: (data: eachUserType | DocumentData) => void;
-    selectedChat: allEachChatType | null | DocumentData;
-    setSelectedChat: React.Dispatch<React.SetStateAction<null | allEachChatType | DocumentData>>;
+    selectedChat: string | null ;
+    setSelectedChat: React.Dispatch<React.SetStateAction<null | string>>;
 }
 type StoreFunctionProps = {
     children: ReactNode
@@ -32,7 +31,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     const [otheruser, setOtherUser] = useState<null | eachUserType[] | DocumentData[]>(null);
     const [chatlisteing, setChatListening, chatListeningRef] = useState<string[] | null>(null);
     const [chats, setChats,chatref] = useState<messageGroupType[] | DocumentData[] | null>(null);
-    const [selectedChat, setSelectedChat,selectedChatref] = useState<messageGroupType | DocumentData | null>(null);
+    const [selectedChat, setSelectedChat,selectedChatref] = useState<string | null>(null);
 
     const setChatFirstTime = (chatDetails: messageGroupType | DocumentData) => {
         if (chatref.current) {
@@ -131,7 +130,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                         })
                         if(!getChat){
                             each.messages.push(message);
-                            if(chatId!==selectedChatref.current?.chatId && message.senderId!==user?.uid){
+                            if(chatId!==selectedChatref.current && message.senderId!==user?.uid){
                                  new Audio(tone).play(); 
                                 
                             }

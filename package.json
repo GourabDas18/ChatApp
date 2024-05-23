@@ -16,6 +16,8 @@
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.5",
     "react-usestateref": "^1.0.8",
+    "react-viewport-list": "^7.1.2",
+    "react-virtuoso": "^4.7.10",
     "vite-plugin-static-copy": "^1.0.4"
   },
   "devDependencies": {

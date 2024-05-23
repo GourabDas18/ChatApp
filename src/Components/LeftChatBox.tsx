@@ -74,7 +74,7 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
         <div className="flex flex-col items-center px-2">
             {allchats !== null ?
              allchats.map((each, i) => {
-                return <div className="w-full bg-gray-50 rounded-md flex flex-row items-center px-2  py-1 md:pl-3 md:py-2 select-none cursor-pointer mb-2 md:mb-4" onClick={() => { setSelectedChat(each); setShowleft(false) }} key={JSON.stringify(each) + i}>
+                return <div className="w-full bg-gray-50 dark:bg-gray-900 dark:text-slate-300 rounded-md flex flex-row items-center px-2  py-1 md:pl-3 md:py-2 select-none cursor-pointer mb-2 md:mb-4" onClick={() => { setSelectedChat(each.chatId); console.log(each); setShowleft(false) }} key={JSON.stringify(each) + i}>
                     {/* New Message No----- */}
                     {noOfUnreadMessage(each.messages)>0 &&
                     <span className="text-yellow-600 text-[1vw] w-[2vw] h-[2vw] md:w-[8vw] md:h-[8vw] flex items-center justify-center rounded-full bg-yellow-50 font-medium absolute right-3 top-0">
@@ -97,13 +97,13 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                             
                             each.messages[each.messages.length-1].senderId===user?.uid
                             ?each.messages[each.messages.length-1].content.includes('base64') ? 'You: Image 🌇' : 'You: '+each.messages[each.messages.length-1].content.substring(0,25)+' ...'
-                            : each.messages[each.messages.length-1].content.includes('base64') ? 'Image 🌇' : <span className="text-pink-700 font-medium">{each.messages[each.messages.length-1].content.substring(0,25)+' ...' }</span>
+                            : each.messages[each.messages.length-1].content.includes('base64') ? 'Image 🌇' : <span className="text-pink-700 dark:text-pink-400 font-medium">{each.messages[each.messages.length-1].content.substring(0,25)+' ...' }</span>
 
 
                             : 'New to chat 👋'}
                         </p>
                         </div>
-                        <p className="text-[0.65vw] md:text-[2.2vw] md:text-violet-600 text-violet-400">{each.messages.length > 0 && new Date(parseInt(each.messages[each.messages.length-1].timestamp)).toLocaleString()}</p>
+                        <p className="text-[0.65vw] md:text-[2.2vw] md:text-violet-600 dark:text-violet-400 text-violet-400">{each.messages.length > 0 && new Date(parseInt(each.messages[each.messages.length-1].timestamp)).toLocaleString()}</p>
                     </div>
                 </div>
             })
