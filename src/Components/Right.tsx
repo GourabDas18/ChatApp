@@ -62,8 +62,8 @@ const Right = ({ imageModuleShowRight,setImageModuleShowRight,showRight,setShowR
   return (
     <>
     {imageModuleShowRight && <ImageView setImageShow={setImageModuleShowRight} src={imgSrc}/>}
-    <div className={`flex flex-col min-h-full max-h-full w-[25%] overflow-hidden bg-white dark:bg-gray-800 p-4 md:absolute ${showRight? 'md:translate-x-0':'md:translate-x-[100dvw]'} transition-all md:w-full md:z-20 md:mx-0 md:px-0`}>
-       <i className="fi fi-sr-times-hexagon absolute top-2 left-2 hidden md:block z-10" onClick={()=>{setShowRight(false)}}></i>
+    <div className={`flex flex-col min-h-full max-h-full w-[25%] overflow-hidden bg-gray-300 dark:bg-gray-800 p-4 md:absolute ${showRight? 'md:translate-x-0':'md:translate-x-[100dvw]'} transition-all md:w-full md:z-20 md:mx-0 md:px-0`}>
+       <i className="fi fi-sr-times-hexagon absolute top-2 left-2 hidden md:block z-10 dark:bg-slate-400" onClick={()=>{setShowRight(false)}}></i>
         
         {
             selectedChat ?

@@ -109,6 +109,7 @@ const Middle = ({ setShowleft,setShowRight,imageShow,setImageShow }: Middletype)
         }
         if (e.currentTarget.files) {
             const fileBlob = e.currentTarget.files[0];
+           
             reader.readAsDataURL(fileBlob);
         }
     }
@@ -131,7 +132,7 @@ const Middle = ({ setShowleft,setShowRight,imageShow,setImageShow }: Middletype)
         <div className='w-[55%] md:w-full bg-[#ffffff77] dark:bg-[#2d334c8f] min-h-full flex flex-col'>
             {imageShow && <ImageView setImageShow={setImageShow} src={imgsrc}/>}
             {/* Chat Header */}
-            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-white dark:bg-gray-900 flex flex-row items-center px-5 py-2 md:absolute md:w-full md:z-10'>
+            <div className='w-full h-[3vw] select-none md:h-[12vw] bg-gray-200 dark:bg-gray-900 flex flex-row items-center px-5 py-2 md:absolute md:w-full md:z-10'>
                 {selectedChat ?
                 
                     <div className="flex w-full flex-row items-center justify-between">

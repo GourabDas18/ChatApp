@@ -19,6 +19,9 @@ type storeType = {
     updateOtherUser: (data: eachUserType | DocumentData) => void;
     selectedChat: string | null ;
     setSelectedChat: React.Dispatch<React.SetStateAction<null | string>>;
+    signoutContext:()=>void;
+    setLoginFormShow: React.Dispatch<React.SetStateAction<boolean>>;
+    loginFormShow: boolean;
 }
 type StoreFunctionProps = {
     children: ReactNode
@@ -32,6 +35,19 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     const [chatlisteing, setChatListening, chatListeningRef] = useState<string[] | null>(null);
     const [chats, setChats,chatref] = useState<messageGroupType[] | DocumentData[] | null>(null);
     const [selectedChat, setSelectedChat,selectedChatref] = useState<string | null>(null);
+    const[loginFormShow,setLoginFormShow]=useState<boolean>(true);
+
+    const signoutContext=()=>{
+        window.localStorage.clear();
+        window.indexedDB.deleteDatabase('chatApp');
+        setUser(null);
+        setOtherUser(null);
+        setUser(null);
+        setChatListening(null);
+        setChats(null);
+        setSelectedChat(null);
+        setUser(null);
+    }
 
     const setChatFirstTime = (chatDetails: messageGroupType | DocumentData) => {
         if (chatref.current) {
@@ -156,7 +172,7 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
     }
 
     return (
-        <Store.Provider value={{ user, setUser, otheruser, setOtherUser,chatlisteing, chatListeningRef, setChatListening, chats, updateChat, setChatFirstTime,updateOtherUser, selectedChat, setSelectedChat, addChatMessage }}>
+        <Store.Provider value={{ user, setUser, otheruser, setOtherUser,chatlisteing, chatListeningRef, setChatListening, chats, updateChat, setChatFirstTime,updateOtherUser, selectedChat, setSelectedChat, addChatMessage,signoutContext,loginFormShow,setLoginFormShow }}>
             {children}
         </Store.Provider>
     )

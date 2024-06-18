@@ -17,6 +17,7 @@ export type eachMessageType = {
 export type friendRequestDataType={
     "uid":string,
     "username":string,
+    'profilePic'?:string
 }
 
 export type eachUserType = {

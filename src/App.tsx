@@ -27,7 +27,8 @@ function App() {
   const[imageModuleShow,setImageModuleShow]=useState<boolean>(false);
   const[imageModuleShowRight,setImageModuleShowRight]=useState<boolean>(false);
   const[showleft,setShowleft]=useState<boolean>(true);
-  const[showRight,setShowRight]=useState<boolean>(true);
+  const[showRight,setShowRight]=useState<boolean>(false);
+  const[showAbout,setShowAbout]=useState<boolean>(false);
   const[showLogin,setShowLogin]=useState<boolean|null>(null);
   const [messageList,setMessageList]=useState<string[]>([]);
   const [fistTimeTokenGet,setFirstTimeTokenGet]=useState<boolean>(false);
@@ -134,7 +135,7 @@ function App() {
   return (
       <>
       <div className='mainDiv dark:bg-[#2d2a2a8a] flex flex-row md:w-full md:h-full rounded-md'>
-      <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft}/>
+      <Left setaddFriendShow={setaddFriendShow} setRequestFriendShow={setRequestFriendShow} setShowleft={setShowleft} showleft={showleft} setShowAbout={setShowAbout} showAbout={showAbout}/>
       <Middle setShowleft={setShowleft} setShowRight={setShowRight} imageShow={imageModuleShow} setImageShow={setImageModuleShow}/>
       <Right imageModuleShowRight={imageModuleShowRight} setImageModuleShowRight={setImageModuleShowRight} setShowRight={setShowRight} showRight={showRight}/>
       </div>

@@ -31,8 +31,13 @@ const RequestBox = ({ setRequestFriendShow }: RequestBoxType) => {
             <hr className=" my-2 w-full border-b-2 border-pink-300" />
             {user?.fr.length>0 && user?.fr.map((each: friendRequestDataType) => {
                 return <div className="flex flex-row items-center px-4 py-3 bg-white my-[0.5vw] w-full rounded-lg select-none">
-                    <span className="h-[2vw] w-[2vw] md:h-7 md:w-7 rounded-full text-white bg-slate-700 flex items-center justify-center">{each.username.substring(0, 1).toUpperCase()}</span>
-                    <h2 className="text-[1vw] md:text-sm font-medium pl-2">{each.username}</h2>
+                    {
+                        each.profilePic ?
+                        <img src={each.profilePic} className="h-[2vw] w-[2vw] md:h-8 md:w-8 rounded-full bg-cover bg-center" />
+                        :
+                        <span className="h-[2vw] w-[2vw] md:h-8 md:w-8 rounded-full text-white bg-slate-700 flex items-center justify-center">{each.username.substring(0, 1).toUpperCase()}</span>
+                   
+                    }  <h2 className="text-[1vw] md:text-sm font-medium pl-2">{each.username}</h2>
                     <div className="flex flex-row gap-3 md:gap-5 ml-auto">
                         <span className="h-[1.7vw] w-[1.7vw] md:h-6 md:w-6 text-[0.8vw] md:text-xs flex justify-center items-center bg-gray-100 rounded-full cursor-pointer" onClick={()=>{
                             reqAccept({"uid":user?.uid,"username":user?.username},{"uid":each.uid,"username":each.username},chatListeningRef.current,setChatListening,updateChat,addChatMessage,chats,updateOtherUser,user)

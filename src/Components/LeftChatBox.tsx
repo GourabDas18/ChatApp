@@ -20,6 +20,8 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
     const { user, otheruser, chats, setSelectedChat } = useStore();
     const [ allchats , setAllChat] = useState<null | allEachChatType[] | DocumentData[]>(null);
     useEffect(()=>{
+        if(!user){setAllChat(null)}
+        if(!chats){setAllChat(null)}
         if(chats){
             const chatList:allEachChatType[]=[];
             chats.forEach((eachChat)=>{
@@ -56,7 +58,7 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
             });
             setAllChat([...chatList])
         }
-    },[chats, otheruser, user?.uid])
+    },[chats, otheruser, user])
   
     
 
@@ -107,7 +109,7 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                     </div>
                 </div>
             })
-            : <div className="text-[0.8vw] font-medium">👆 Add Your Friend</div>
+            : user &&  <div className="text-[0.8vw] font-medium">👆 Add Your Friend</div>
         }
         </div>
     )
