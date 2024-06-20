@@ -106,7 +106,7 @@ const About = ({ setShowAbout }: AboutType) => {
     }
     
     return (
-        <div className='fixed  top-[100dvh] min-h-[70%] max-h-[85%] w-[45vw] md:w-[95vw] overflow-hidden flex flex-col items-center justify-center shadow-lg bg-[#ffffffb0] dark:bg-[#25223dba] md:backdrop-blur-md md:bg-[#ffffffb2] md:shadow-lg md:rounded-lg  rounded-md backdrop-blur-sm border-2 border-gray-300 dark:border-gray-700 z-[200]' ref={aboutElement}>
+        <div className='fixed  top-[100dvh] min-h-[70%] max-h-[85%] w-[45vw] sm:w-[95vw] overflow-hidden flex flex-col items-center justify-center shadow-lg bg-[#ffffffb0] dark:bg-[#25223dba] sm:backdrop-blur-md sm:bg-[#ffffffb2] sm:shadow-lg sm:rounded-lg  rounded-md backdrop-blur-sm border-2 border-gray-300 dark:border-gray-700 z-[200]' ref={aboutElement}>
            
            {/* Close Butoon ------------- */}
            <i className="fi fi-sr-times-hexagon absolute top-2 left-2 z-10 dark:text-slate-50 text-slate-600" onClick={()=>{setShowAbout(false)}}></i>

@@ -4,6 +4,7 @@ import { eachGroupMessageType, eachUserType, messageGroupType } from "./allTypes
 import { DocumentData } from "firebase/firestore";
 import { writeLocalDB } from "../Controller/localDatabase/writeLocalDB";
 import tone from "../assets/message.mp3";
+import CryptoJS from "crypto-js";
 type storeType = {
     user: null | eachUserType | DocumentData;
     otheruser: null | eachUserType[] | DocumentData;
@@ -65,6 +66,15 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                     if (b.timestamp > a.timestamp) return 1;
                     return 0; // Add this line to handle the case when timestamps are equal
                 });
+                editableChatData.messages.forEach((each:eachGroupMessageType)=>{
+                    try {
+                        console.log(each.content)
+                       const decrypt= CryptoJS.AES.decrypt(each.content, import.meta.env.VITE_ENC_KEY).toString(CryptoJS.enc.Utf8);
+                       decrypt !=='' ? each.content=decrypt : false;
+                    } catch (error) {
+                     console.log(error)   
+                    }
+                })
                 chatData.push(editableChatData)
             }
             setChats([...chatData])
@@ -75,6 +85,15 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                 if (b.timestamp > a.timestamp) return 1;
                 return 0; // Add this line to handle the case when timestamps are equal
             });
+            editableChatData.messages.forEach((each:eachGroupMessageType)=>{
+                try {
+                    console.log(each.content)
+                    const decrypt= CryptoJS.AES.decrypt(each.content, import.meta.env.VITE_ENC_KEY).toString(CryptoJS.enc.Utf8);
+                    decrypt !=='' ? each.content=decrypt : false;
+                } catch (error) {
+                 console.log(error)   
+                }
+            })
             setChats([editableChatData]);
         }
 
@@ -95,11 +114,23 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                     if (b.timestamp > a.timestamp) return 1;
                     return 0; // Add this line to handle the case when timestamps are equal
                 });
+                
                 chatData.push(editableChatData)
             }
             chatData.forEach(each=>{
                 writeLocalDB(each)
             });
+            chatData.forEach((each:messageGroupType | DocumentData)=>{
+                each.messages.forEach((data:eachGroupMessageType)=>{
+                    try {
+                        console.log(data.content)
+                        const decrypt= CryptoJS.AES.decrypt(data.content, import.meta.env.VITE_ENC_KEY).toString(CryptoJS.enc.Utf8);
+                        decrypt !=='' ? data.content=decrypt : false;
+                    } catch (error) {
+                     console.log(error)   
+                    }
+                })
+            })
             setChats([...chatData])
         } else {
             const editableChatData = chatDetails;
@@ -109,6 +140,16 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                 return 0; // Add this line to handle the case when timestamps are equal
             });
             writeLocalDB(editableChatData);
+            editableChatData.messages.forEach((each:eachGroupMessageType)=>{
+                try {
+                    const decrypt = CryptoJS.AES.decrypt(each.content, import.meta.env.VITE_ENC_KEY).toString(CryptoJS.enc.Utf8);
+                    decrypt !=='' ? each.content=decrypt : false;
+                   
+                } catch (error) {
+                 console.log(error)   
+                }
+            })
+
             setChats([editableChatData]);
         }
 
@@ -156,6 +197,18 @@ export const StoreFunction = ({ children }: StoreFunctionProps) => {
                     writeLocalDB(chatData[i]);
                 }
             });
+            
+            chatData.forEach((each:messageGroupType | DocumentData)=>{
+                each.messages.forEach((data:eachGroupMessageType)=>{
+                    try {
+                        console.log(data.content)
+                        const decrypt= CryptoJS.AES.decrypt(data.content, import.meta.env.VITE_ENC_KEY).toString(CryptoJS.enc.Utf8);
+                        decrypt !=='' ? data.content=decrypt : false;
+                    } catch (error) {
+                     console.log(error)   
+                    }
+                })
+            })
             setChats([...chatData]);            
         }
     },[chatref, selectedChatref, setChats, user?.uid])

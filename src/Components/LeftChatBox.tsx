@@ -58,6 +58,7 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
             });
             setAllChat([...chatList])
         }
+        console.log("otheruser",otheruser)
     },[chats, otheruser, user])
   
     
@@ -76,24 +77,24 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
         <div className="flex flex-col items-center px-2">
             {allchats !== null ?
              allchats.map((each, i) => {
-                return <div className="w-full bg-gray-50 dark:bg-gray-900 dark:text-slate-300 rounded-md flex flex-row items-center px-2  py-1 md:pl-3 md:py-2 select-none cursor-pointer mb-2 md:mb-4" onClick={() => { setSelectedChat(each.chatId); console.log(each); setShowleft(false) }} key={JSON.stringify(each) + i}>
+                return <div className="w-full bg-gray-50 dark:bg-gray-900 dark:text-slate-300 rounded-md flex flex-row items-center px-2  py-1 sm:pl-3 sm:py-2 select-none cursor-pointer mb-2 sm:mb-4" onClick={() => { setSelectedChat(each.chatId); console.log(each); setShowleft(false) }} key={JSON.stringify(each) + i}>
                     {/* New Message No----- */}
                     {noOfUnreadMessage(each.messages)>0 &&
-                    <span className="text-yellow-600 text-[1vw] w-[2vw] h-[2vw] md:w-[8vw] md:h-[8vw] flex items-center justify-center rounded-full bg-yellow-50 font-medium absolute right-3 top-0">
-                    <span className="text-[1.12vw] md:text-[3.2vw] absolute -right-[0.8vw] -top-[0.85vw]">🔔 </span>   
-                    <span className="text-[0.95vw] md:text-[4vw]">{noOfUnreadMessage(each.messages)}</span>
+                    <span className="text-yellow-600 text-[1vw] w-[2vw] h-[2vw] sm:w-[8vw] sm:h-[8vw] flex items-center justify-center rounded-full bg-yellow-50 font-medium absolute right-3 top-0">
+                    <span className="text-[1.12vw] sm:text-[3.2vw] absolute -right-[0.8vw] -top-[0.85vw]">🔔 </span>   
+                    <span className="text-[0.95vw] sm:text-[4vw]">{noOfUnreadMessage(each.messages)}</span>
                     </span>
                     }
                     
                     {
-                    each.user?.profilePic?<img src={each.user.profilePic} alt={each.user?.username} className={`h-10 w-10 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[10vw] md:w-[10vw] rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user?.username.substring(0, 1).toUpperCase()}</span>
+                    each.user?.profilePic?<img src={each.user.profilePic} alt={each.user?.username} className={`h-10 w-10 md:h-6 md:w-6 rounded-full object-contain`} /> : <span className="h-[2vw] w-[2vw] md:h-[6vw] md:w-[6vw] sm:h-[10vw] sm:w-[10vw]  rounded-full text-white bg-slate-700 flex items-center justify-center">{each.user?.username.substring(0, 1).toUpperCase()}</span>
                     }
 
                   
                     <div className="flex flex-col items-start ml-1">
                         <div className="flex flex-col">
-                        <p className="text-[0.9vw] md:text-sm font-medium">{each.user?.username}</p>
-                        <p className="text-[0.75vw] md:text-xs">
+                        <p className="text-[0.9vw] sm:text-sm font-medium">{each.user?.username}</p>
+                        <p className="text-[0.75vw] sm:text-xs">
                             {each.messages.length > 0 
                             ? 
                             
@@ -105,7 +106,7 @@ const LeftChatBox = ({setShowleft}:leftChatBoxType) => {
                             : 'New to chat 👋'}
                         </p>
                         </div>
-                        <p className="text-[0.65vw] md:text-[2.2vw] md:text-violet-600 dark:text-violet-400 text-violet-400">{each.messages.length > 0 && new Date(parseInt(each.messages[each.messages.length-1].timestamp)).toLocaleString()}</p>
+                        <p className="text-[0.65vw] sm:text-[2.2vw] sm:text-violet-600 dark:text-violet-400 text-violet-400">{each.messages.length > 0 && new Date(parseInt(each.messages[each.messages.length-1].timestamp)).toLocaleString()}</p>
                     </div>
                 </div>
             })
